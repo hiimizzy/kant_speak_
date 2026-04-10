@@ -226,7 +226,7 @@ function testarHerancaEComportamentos() {
         $atv->avaliar();
     }
 
-    echo "<h2>🧪 Teste 3: Associação entre Criança e Atividade</h2>";
+    echo "<h2> Teste 3: Associação entre Criança e Atividade</h2>";
     $aluno = new Crianca("Rafael", 6, 103, 1);
     $aluno->iniciarSessao();
     $aluno->escolherAtividade(new Write("Letter A", 1, "A"));
