@@ -1,239 +1,305 @@
+<?php
+session_start();
+
+// ---------- Dados ----------
+$palavras = [
+    ["word" => "Apple", "emoji" => "🍎", "audio" => "Apple"],
+    ["word" => "Ball",  "emoji" => "⚽",  "audio" => "Ball"],
+    ["word" => "Dog",   "emoji" => "🐶",  "audio" => "Dog"],
+];
+$letras = ["A", "B", "C"];
+
+// ---------- Gerenciador de Sessão (encapsulamento) ----------
+class SessionManager {
+    public function get(string $key, $default = null) {
+        return $_SESSION[$key] ?? $default;
+    }
+
+    public function set(string $key, $value): void {
+        $_SESSION[$key] = $value;
+    }
+
+    public function incrementScore(int $points): void {
+        $_SESSION['score'] = ($_SESSION['score'] ?? 0) + $points;
+    }
+
+    public function getScore(): int {
+        return $_SESSION['score'] ?? 0;
+    }
+
+    public function setFeedback(string $msg): void {
+        $_SESSION['feedback'] = $msg;
+    }
+
+    public function getFeedbackAndClear(): ?string {
+        $msg = $_SESSION['feedback'] ?? null;
+        unset($_SESSION['feedback']);
+        return $msg;
+    }
+}
+
+// ---------- Classe abstrata ----------
+abstract class Atividade {
+    protected string $nome;
+    protected SessionManager $session;
+    protected array $itens;          // palavras ou letras
+    protected string $indexKey;      // chave na sessão para guardar o índice atual
+
+    public function __construct(string $nome, array $itens, string $indexKey, SessionManager $session) {
+        $this->nome = $nome;
+        $this->itens = $itens;
+        $this->indexKey = $indexKey;
+        $this->session = $session;
+    }
+
+    protected function getCurrentIndex(): int {
+        return $this->session->get($this->indexKey, 0);
+    }
+
+    protected function setCurrentIndex(int $index): void {
+        $this->session->set($this->indexKey, $index);
+    }
+
+    protected function getCurrentItem() {
+        $idx = $this->getCurrentIndex();
+        return $this->itens[$idx] ?? null;
+    }
+
+    protected function advanceToNextItem(): void {
+        $next = ($this->getCurrentIndex() + 1) % count($this->itens);
+        $this->setCurrentIndex($next);
+    }
+
+    protected function addPoints(int $value): void {
+        $this->session->incrementScore($value);
+    }
+
+    abstract public function render(): void;
+
+    // Processa a resposta do usuário (POST)
+    abstract public function process(array $postData): void;
+}
+
+// ---------- Subclasse Listen (somente renderização, sem validação) ----------
+class Listen extends Atividade {
+    public function __construct(array $itens, SessionManager $session) {
+        parent::__construct('Listen', $itens, 'listen_index', $session);
+    }
+
+    public function render(): void {
+        $item = $this->getCurrentItem();
+        if (!$item) return;
+        echo "<div class='card'>
+                <h2>Listen</h2>
+                <div class='emoji'>{$item['emoji']}</div>
+                <p>Ouça e repita:</p>
+                <button onclick=\"falar('{$item['audio']}')\">🔊 Ouvir</button>
+              </div>";
+    }
+
+    public function process(array $postData): void {
+        // Listen não processa envio do usuário (apenas áudio)
+    }
+}
+
+// ---------- Subclasse Write ----------
+class Write extends Atividade {
+    public function __construct(array $itens, SessionManager $session) {
+        parent::__construct('Write', $itens, 'write_index', $session);
+    }
+
+    public function render(): void {
+        $item = $this->getCurrentItem();
+        echo "<div class='card'>
+                <h2>Write</h2>
+                <div class='emoji'>{$item['emoji']}</div>
+                <form method='POST'>
+                    <input type='hidden' name='action' value='write'>
+                    <input type='text' name='resposta' placeholder='Digite a palavra'>
+                    <button type='submit'>Enviar</button>
+                </form>
+              </div>";
+    }
+
+    public function process(array $postData): void {
+        $resposta = strtolower(trim($postData['resposta'] ?? ''));
+        $correta = strtolower($this->getCurrentItem()['word']);
+        if ($resposta === $correta) {
+            $this->session->setFeedback('Correto!');
+            $this->addPoints(10);
+            $this->advanceToNextItem();
+        } else {
+            $this->session->setFeedback('Tente novamente');
+        }
+    }
+}
+
+// ---------- Subclasse Speak ----------
+class Speak extends Atividade {
+    public function __construct(array $itens, SessionManager $session) {
+        parent::__construct('Speak', $itens, 'speak_index', $session);
+    }
+
+    public function render(): void {
+        $item = $this->getCurrentItem();
+        echo "<div class='card'>
+                <h2>Speak</h2>
+                <div class='emoji'>{$item['emoji']}</div>
+                <p>Fale a palavra em inglês:</p>
+                <button type='button' onclick='iniciarReconhecimento()'>🎤 Falar</button>
+                <form method='POST' id='formSpeak'>
+                    <input type='hidden' name='action' value='speak'>
+                    <input type='hidden' name='resposta' id='falaCapturada'>
+                </form>
+              </div>";
+    }
+
+    public function process(array $postData): void {
+        $resposta = strtolower(trim($postData['resposta'] ?? ''));
+        $correta = strtolower($this->getCurrentItem()['word']);
+        similar_text($resposta, $correta, $percentual);
+        if ($percentual >= 80) {
+            $this->session->setFeedback('Pronúncia muito boa!');
+            $this->addPoints(10);
+            $this->advanceToNextItem();
+        } else {
+            $this->session->setFeedback('Tente pronunciar novamente');
+        }
+    }
+}
+
+// ---------- Subclasse Alphabet ----------
+class Alphabet extends Atividade {
+    public function __construct(array $itens, SessionManager $session) {
+        parent::__construct('Alphabet', $itens, 'alphabet_index', $session);
+    }
+
+    public function render(): void {
+        $letra = $this->getCurrentItem();
+        echo "<div class='card'>
+                <h2>Alphabet</h2>
+                <p class='letter'>{$letra}</p>
+                <form method='POST'>
+                    <input type='hidden' name='action' value='alphabet'>
+                    <input type='text' name='resposta' maxlength='1' placeholder='Digite a letra'>
+                    <button type='submit'>Enviar</button>
+                </form>
+              </div>";
+    }
+
+    public function process(array $postData): void {
+        $resposta = strtoupper(trim($postData['resposta'] ?? ''));
+        $correta = $this->getCurrentItem();
+        if ($resposta === $correta) {
+            $this->session->setFeedback('Acertou a letra!');
+            $this->addPoints(10);
+            $this->advanceToNextItem();
+        } else {
+            $this->session->setFeedback('Tente novamente');
+        }
+    }
+}
+
+// ---------- Processamento de requisições POST ----------
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $sessionManager = new SessionManager();
+    $action = $_POST['action'] ?? '';
+
+    // Mapeamento de ações para classes
+    $activities = [
+        'write'   => new Write($palavras, $sessionManager),
+        'speak'   => new Speak($palavras, $sessionManager),
+        'alphabet'=> new Alphabet($letras, $sessionManager),
+    ];
+
+    if (isset($activities[$action])) {
+        $activities[$action]->process($_POST);
+    }
+
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+// ---------- Renderização da página ----------
+$sessionManager = new SessionManager();
+$feedback = $sessionManager->getFeedbackAndClear();
+$score = $sessionManager->getScore();
+
+// // Teste manual
+// $session = new SessionManager();
+// $write = new Write($palavras, $session);
+// echo "Índice inicial: " . $write->getCurrentIndex(); // 0
+// $write->advanceToNextItem();
+// echo "Após avançar: " . $write->getCurrentIndex(); // 1
+// $write->addPoints(5);
+// echo "Pontos: " . $session->getScore(); // 5
+
+?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Kant Speak - Versão com Encapsulamento e Herança</title>
-    <style>
-        body { font-family: monospace; background: #f4f4f9; margin: 20px; }
-        .log { background: #1e1e2f; color: #d4d4d4; padding: 10px; margin: 5px 0; border-left: 5px solid #ff8c42; white-space: pre-wrap; }
-        h2 { color: #2c3e66; }
-        pre { background: #fff; padding: 10px; border: 1px solid #ccc; overflow: auto; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kant Speak</title>
+<style>
+/* (mesmo CSS original, mantido) */
+body { font-family: Arial, sans-serif; background: linear-gradient(135deg,#8b5cf6,#3b82f6); color:#fff; margin:0; padding:20px; }
+.container { max-width: 900px; margin: auto; }
+.header { display:flex; justify-content:space-between; align-items:center; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 16px; margin-top: 20px; }
+@media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+.card { background: #ffffff20; padding: 18px; border-radius: 18px; backdrop-filter: blur(10px); text-align: center; min-height: 220px; }
+.emoji { font-size: 60px; }
+.letter { font-size: 56px; font-weight: bold; }
+input { padding: 10px; border: none; border-radius: 10px; width: 80%; margin: 8px 0; }
+button { padding:12px 20px; border:none; border-radius:10px; cursor:pointer; background:#22c55e; color:#fff; }
+.feedback { margin-top:20px; background:#00000030; padding:15px; border-radius:12px; }
+</style>
 </head>
 <body>
-<h1> Kant Speak - Código com Encapsulamento, Herança e Testes</h1>
-<p>✅ Atributos privados, getters/setters, herança testada, reuso de código.</p>
+<div class="container">
+    <div class="header">
+        <h1>Kant Speak Pals</h1>
+        <h3>Pontos: <?= $score ?></h3>
+    </div>
 
-<?php
+    <?php if ($feedback): ?>
+        <div class="feedback"><?= htmlspecialchars($feedback) ?></div>
+    <?php endif; ?>
 
-// 1. CLASSE ABSTRATA (Usuario)
+    <div class="grid">
+        <?php (new Listen($palavras, $sessionManager))->render(); ?>
+        <?php (new Write($palavras, $sessionManager))->render(); ?>
+        <?php (new Speak($palavras, $sessionManager))->render(); ?>
+        <?php (new Alphabet($letras, $sessionManager))->render(); ?>
+    </div>
+</div>
 
-abstract class Usuario {
-    private string $nome;
-    private int $idade;
-
-    public function __construct(string $nome, int $idade) {
-        $this->setNome($nome);
-        $this->setIdade($idade);
-    }
-
-    // Getters e Setters (encapsulamento)
-    public function getNome(): string { return $this->nome; }
-    public function setNome(string $nome): void { $this->nome = $nome; }
-
-    public function getIdade(): int { return $this->idade; }
-    public function setIdade(int $idade): void { $this->idade = $idade; }
-
-    // Métodos abstratos (serão implementados nas subclasses)
-    abstract public function iniciar(): void;
-    abstract public function avaliar(): void;
+<script>
+function falar(texto) {
+    const msg = new SpeechSynthesisUtterance(texto);
+    msg.lang = 'en-US';
+    speechSynthesis.speak(msg);
 }
 
-// 2. SUBCLASSE CRIANCA
-
-class Crianca extends Usuario {
-    private int $id;
-    private int $nivel;
-
-    public function __construct(string $nome, int $idade, int $id, int $nivel) {
-        parent::__construct($nome, $idade);
-        $this->setId($id);
-        $this->setNivel($nivel);
+function iniciarReconhecimento() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert('Seu navegador não suporta reconhecimento de voz.');
+        return;
     }
-
-    // Encapsulamento
-    public function getId(): int { return $this->id; }
-    public function setId(int $id): void { $this->id = $id; }
-    public function getNivel(): int { return $this->nivel; }
-    public function setNivel(int $nivel): void { $this->nivel = $nivel; }
-
-    // Métodos específicos
-    public function iniciarSessao(): void {
-        echo "<div class='log'>[Criança] {$this->getNome()} (ID: {$this->getId()}) iniciou sessão.</div>";
-    }
-
-    public function escolherAtividade(Atividade $atividade): void {
-        echo "<div class='log'>[Criança] {$this->getNome()} escolheu '{$atividade->getNome()}' (nível {$atividade->getNivelDificuldade()}).</div>";
-        $atividade->iniciar();
-    }
-
-    // Implementação dos métodos abstratos herdados
-    public function iniciar(): void {
-        echo "<div class='log'>[Criança] {$this->getNome()} está pronta para aprender!</div>";
-    }
-
-    public function avaliar(): void {
-        echo "<div class='log'>[Criança] Avaliando {$this->getNome()} - Nível: {$this->getNivel()}</div>";
-    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.start();
+    recognition.onresult = function(event) {
+        const texto = event.results[0][0].transcript;
+        document.getElementById('falaCapturada').value = texto;
+        document.getElementById('formSpeak').submit();
+    };
+    recognition.onerror = function() {
+        alert('Não foi possível capturar sua fala.');
+    };
 }
-
-// ------------------------------
-// 3. SUBCLASSE RESPONSAVEL
-// ------------------------------
-class Responsavel extends Usuario {
-    private int $id;
-    private int $nivel;
-
-    public function __construct(string $nome, int $idade, int $id, int $nivel) {
-        parent::__construct($nome, $idade);
-        $this->setId($id);
-        $this->setNivel($nivel);
-    }
-
-    public function getId(): int { return $this->id; }
-    public function setId(int $id): void { $this->id = $id; }
-    public function getNivel(): int { return $this->nivel; }
-    public function setNivel(int $nivel): void { $this->nivel = $nivel; }
-
-    public function iniciarSessao(): void {
-        echo "<div class='log'>[Responsável] {$this->getNome()} acessou o painel.</div>";
-    }
-
-    public function monitorarDesempenho(Crianca $crianca): void {
-        echo "<div class='log'>[Responsável] Monitorando {$crianca->getNome()} (nível {$crianca->getNivel()}).</div>";
-    }
-
-    public function iniciar(): void {
-        echo "<div class='log'>[Responsável] {$this->getNome()} configurando ambiente.</div>";
-    }
-
-    public function avaliar(): void {
-        echo "<div class='log'>[Responsável] Avaliando relatórios gerais.</div>";
-    }
-}
-
-// ------------------------------
-// 4. CLASSE PAI ATIVIDADE (abstrata)
-// ------------------------------
-abstract class Atividade {
-    private string $nome;
-    private int $nivelDificuldade;
-
-    public function __construct(string $nome, int $nivelDificuldade) {
-        $this->setNome($nome);
-        $this->setNivelDificuldade($nivelDificuldade);
-    }
-
-    public function getNome(): string { return $this->nome; }
-    public function setNome(string $nome): void { $this->nome = $nome; }
-    public function getNivelDificuldade(): int { return $this->nivelDificuldade; }
-    public function setNivelDificuldade(int $nivel): void { $this->nivelDificuldade = $nivel; }
-
-    abstract public function iniciar(): void;
-    abstract public function avaliar(): void;
-}
-
-// ------------------------------
-// 5. SUBATIVIDADES
-// ------------------------------
-class Listen extends Atividade {
-    private string $palavra;
-    public function __construct(string $nome, int $nivel, string $palavra) {
-        parent::__construct($nome, $nivel);
-        $this->setPalavra($palavra);
-    }
-    public function getPalavra(): string { return $this->palavra; }
-    public function setPalavra(string $palavra): void { $this->palavra = $palavra; }
-
-    private function ouvirPalavra(): void { echo "<div class='log'>🔊 Listen: ouvindo '{$this->getPalavra()}'</div>"; }
-    private function compreenderPalavra(): void { echo "<div class='log'>🧠 Listen: teste de compreensão</div>"; }
-
-    public function iniciar(): void {
-        echo "<div class='log'>🎧 --- INICIANDO LISTEN: {$this->getNome()} ---</div>";
-        $this->ouvirPalavra();
-        $this->compreenderPalavra();
-    }
-    public function avaliar(): void { echo "<div class='log'>✅ Listen: avaliação de '{$this->getPalavra()}'</div>"; }
-}
-
-class Write extends Atividade {
-    private string $letra;
-    public function __construct(string $nome, int $nivel, string $letra) {
-        parent::__construct($nome, $nivel);
-        $this->setLetra($letra);
-    }
-    public function getLetra(): string { return $this->letra; }
-    public function setLetra(string $letra): void { $this->letra = $letra; }
-
-    private function digitarLetra(): void { echo "<div class='log'>✍️ Write: desenhar letra '{$this->getLetra()}' no ar (visão computacional)</div>"; }
-    private function validarGesto(): void { echo "<div class='log'>🤖 Write: reconhecendo gesto</div>"; }
-
-    public function iniciar(): void {
-        echo "<div class='log'>✏️ --- INICIANDO WRITE: {$this->getNome()} ---</div>";
-        $this->digitarLetra();
-        $this->validarGesto();
-    }
-    public function avaliar(): void { echo "<div class='log'>✅ Write: avaliação da letra '{$this->getLetra()}'</div>"; }
-}
-
-class Speak extends Atividade {
-    private string $palavra;
-    private string $imagem;
-    public function __construct(string $nome, int $nivel, string $palavra, string $imagem) {
-        parent::__construct($nome, $nivel);
-        $this->setPalavra($palavra);
-        $this->setImagem($imagem);
-    }
-    public function getPalavra(): string { return $this->palavra; }
-    public function setPalavra(string $palavra): void { $this->palavra = $palavra; }
-    public function getImagem(): string { return $this->imagem; }
-    public function setImagem(string $imagem): void { $this->imagem = $imagem; }
-
-    private function gravarAudio(): void { echo "<div class='log'>🎙️ Speak: gravando áudio</div>"; }
-    private function exibirImagem(): void { echo "<div class='log'>🖼️ Speak: mostrando {$this->getImagem()}</div>"; }
-
-    public function iniciar(): void {
-        echo "<div class='log'>🗣️ --- INICIANDO SPEAK: {$this->getNome()} ---</div>";
-        $this->exibirImagem();
-        $this->gravarAudio();
-        echo "<div class='log'>📢 Aluno diz '{$this->getPalavra()}'</div>";
-    }
-    public function avaliar(): void { echo "<div class='log'>✅ Speak: avaliação de pronúncia</div>"; }
-}
-
-// ------------------------------
-// 6. TESTE DE COMPORTAMENTOS HERDADOS E RELAÇÕES
-// ------------------------------
-function testarHerancaEComportamentos() {
-    echo "<h2>🧪 Teste 1: Chamando métodos da classe pai (iniciar/avaliar) via herança</h2>";
-    $c = new Crianca("Joana", 8, 102, 2);
-    $c->iniciar();      // herdado de Usuario
-    $c->avaliar();      // herdado de Usuario
-
-    $r = new Responsavel("Carlos", 40, 202, 1);
-    $r->iniciar();
-    $r->avaliar();
-
-    echo "<h2>🧪 Teste 2: Polimorfismo (tratar diferentes atividades como Atividade)</h2>";
-    $atividades = [
-        new Listen("Animal Sounds", 1, "Dog"),
-        new Write("Letter C", 1, "C"),
-        new Speak("Fruits", 1, "Banana", "🍌 Banana")
-    ];
-    foreach ($atividades as $atv) {
-        echo "<div class='log' style='background:#2a2a3a;'>▶️ Executando: " . $atv->getNome() . "</div>";
-        $atv->iniciar();
-        $atv->avaliar();
-    }
-
-    echo "<h2> Teste 3: Associação entre Criança e Atividade</h2>";
-    $aluno = new Crianca("Rafael", 6, 103, 1);
-    $aluno->iniciarSessao();
-    $aluno->escolherAtividade(new Write("Letter A", 1, "A"));
-}
-
-// Executar os testes
-testarHerancaEComportamentos();
-?>
+</script>
 </body>
 </html>
