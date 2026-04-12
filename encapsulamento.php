@@ -12,7 +12,7 @@ $letras = ["A", "B", "C"];
 // ---------- Gerenciador de Sessão (encapsulamento) ----------
 class SessionManager {
     public function get(string $key, $default = null) {
-        return $_SESSION[$key] ?? $default;
+        return $_SESSION[$key] ?? $default; 
     }
 
     public function set(string $key, $value): void {
