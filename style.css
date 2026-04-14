@@ -483,3 +483,29 @@ body {
     width:100%; max-width:360px;
     margin:0 auto;
   }
+
+  * { font-family: 'Nunito', sans-serif; }
+                .finger-cursor {
+                    position: absolute;
+                    width: 28px;
+                    height: 28px;
+                    background: radial-gradient(circle, #f97316, #ea580c);
+                    border: 2px solid white;
+                    border-radius: 50%;
+                    pointer-events: none;
+                    transform: translate(-50%, -50%);
+                    box-shadow: 0 0 0 4px rgba(249,115,22,0.3);
+                    transition: left 0.02s linear, top 0.02s linear;
+                    z-index: 50;
+                }
+                @keyframes fadeOut {
+                    0% { opacity: 1; transform: translateY(0); }
+                    100% { opacity: 0; transform: translateY(-20px); }
+                }
+                .feedback-toast { animation: fadeOut 2s forwards; }
+                .video-mirror { transform: scaleX(-1); }
+                .loading-pulse { animation: pulse 1.5s ease-in-out infinite; }
+                @keyframes pulse {
+                    0%, 100% { opacity: 0.6; }
+                    50% { opacity: 1; }
+                }

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kant Speak - Speak</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+    .feedback-toast { animation: fadeOut 2s forwards; }
+    .bounce-in { animation: bounceIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+    @keyframes bounceIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      80% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .mic-visual {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f5a623, #f0861a);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+      margin: 20px auto;
+      transition: transform 0.2s;
+    }
+    .mic-visual.listening { animation: pulseMic 1s infinite; }
+    @keyframes pulseMic {
+      0% { box-shadow: 0 0 0 0 rgba(245,166,35,0.4); }
+      70% { box-shadow: 0 0 0 30px rgba(245,166,35,0); }
+      100% { box-shadow: 0 0 0 0 rgba(245,166,35,0); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen p-4 md:p-6">
+  <div class="max-w-lg mx-auto flex flex-col gap-6">
+    <div class="flex items-center justify-between bg-white/80 backdrop-blur-sm p-3 rounded-2xl shadow-sm">
+      <a href="home.html" class="bg-gray-100 hover:bg-gray-200 transition-colors p-2 rounded-full w-10 h-10 flex items-center justify-center text-2xl">←</a>
+      <div class="flex items-center gap-3 bg-amber-50 px-4 py-2 rounded-full">
+        <span class="text-yellow-500 text-xl">⭐</span>
+        <span id="scoreValue" class="font-bold text-gray-800 text-xl">0</span>
+      </div>
+    </div>
+    <h2 class="text-3xl font-bold text-center text-gray-700">🎤 Fale em inglês!</h2>
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 flex flex-col items-center gap-6">
+      <div class="text-8xl" id="wordEmoji">🐱</div>
+      <p class="text-2xl text-gray-500">Diga o nome em inglês!</p>
+      <div id="recognizedContainer" class="hidden bg-gray-100 rounded-xl px-6 py-3 w-full text-center">
+        <p class="text-xl text-gray-700">Você disse: <strong id="recognizedText" class="text-blue-600"></strong></p>
+      </div>
+      <div class="mic-visual" id="micVisual">🎤</div>
+      <div class="flex gap-4 flex-wrap justify-center">
+        <button id="speakBtn" class="bg-blue-600 text-white px-8 py-4 rounded-xl text-xl font-bold hover:bg-blue-700 transition-all shadow-md">🎤 Falar</button>
+        <button id="hintBtn" class="bg-amber-500 text-white px-8 py-4 rounded-xl text-xl font-bold hover:bg-amber-600 transition-all shadow-md">💡 Dica</button>
+      </div>
+    </div>
+    <div id="feedbackContainer" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none"></div>
+    <div class="bg-white/70 rounded-2xl p-3 flex justify-center gap-2 shadow-sm" id="starsContainer">
+      <span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span>
+    </div>
+    <button id="nextBtn" class="bg-amber-500 text-white font-bold py-3 rounded-xl text-xl shadow-md hover:shadow-xl transition-all mx-auto w-full max-w-xs">Próxima palavra →</button>
+  </div>
+  <script src="eventos/speak.js"></script>
+</body>
+</html>
