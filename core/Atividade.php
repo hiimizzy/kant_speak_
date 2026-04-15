@@ -12,20 +12,20 @@ abstract class Atividade {
         $this->session = $session;
     }
 
-    protected function getCurrentIndex(): int {
+public function getCurrentIndex(): int {
         return $this->session->get($this->indexKey, 0);
     }
 
-    protected function setCurrentIndex(int $index): void {
+    public function setCurrentIndex(int $index): void {
         $this->session->set($this->indexKey, $index);
     }
 
-    protected function getCurrentItem() {
+    public function getCurrentItem() {
         $idx = $this->getCurrentIndex();
         return $this->itens[$idx] ?? null;
     }
 
-    protected function advance(): void {
+    public function advance(): void {
         $total = count($this->itens);
         $this->setCurrentIndex(($this->getCurrentIndex() + 1) % $total);
     }

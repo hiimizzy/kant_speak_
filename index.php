@@ -4,6 +4,7 @@ require_once 'activities/Listen.php';
 require_once 'activities/Write.php';
 require_once 'activities/Speak.php';
 require_once 'activities/Alphabet.php';
+
 $session = new SessionManager();
 $score = $session->getScore();
 ?>

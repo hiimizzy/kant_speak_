@@ -39,7 +39,7 @@ drawCtx.lineWidth = 8;
 drawCtx.lineCap = 'round';
 drawCtx.lineJoin = 'round';
 
-// ========== API Calls ==========
+// API 
 async function fetchCurrentItem() {
     const resp = await fetch('api.php?action=getItem&activity=alphabet');
     const data = await resp.json();
@@ -57,8 +57,6 @@ async function updateScoreUI() {
 }
 
 async function addPoints(points) {
-    // O backend já adiciona pontos durante o 'check', então aqui não é necessário.
-    // Apenas atualizamos a UI após o check.
 }
 
 async function handleCheck() {
@@ -127,8 +125,8 @@ function showFeedback(type, message) {
     setTimeout(() => toast.remove(), 2000);
 }
 
-// MediaPipe (mesmo código original, sem alterações)
-async function initHandTracking() { /* ... */ }
+// MediaPipe 
+async function initHandTracking() { /* ... */ } // 
 function isOnlyIndexFingerExtended(landmarks) { /* ... */ }
 function mapToCanvas(normalizedX, normalizedY) { /* ... */ }
 function onHandResults(results) { /* ... */ }

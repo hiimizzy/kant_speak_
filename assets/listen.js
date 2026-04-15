@@ -8,7 +8,18 @@ const words = [
   { word: "BIRD", emoji: "🐦", translation: "pássaro" },
   { word: "FISH", emoji: "🐠", translation: "peixe" },
   { word: "BOOK", emoji: "📚", translation: "livro" },
-  { word: "STAR", emoji: "⭐", translation: "estrela" }
+  { word: "STAR", emoji: "⭐", translation: "estrela" },
+
+  { word: "LION", emoji: "🦁", translation: "leão" },
+  { word: "TIGER", emoji: "🐯", translation: "tigre" },
+  { word: "KOALA", emoji: "🐨", translation: "coala" },
+  { word: "BEE", emoji: "🐝", translation: "abelha" },
+  { word: "ANT", emoji: "🐜", translation: "formiga" },
+  { word: "BEAR", emoji: "🐻", translation: "urso" },
+  { word: "SNAIL", emoji: "🐌", translation: "caracol" },
+  { word: "RABBIT", emoji: "🐰", translation: "coelho" },
+  { word: "JELLYFISH", emoji: "🪼", translation: "água-viva" },
+  { word: "SHARK", emoji: "🦈", translation: "tubarão" },
 ];
 let currentIndex = 0;
 let score = parseInt(localStorage.getItem('totalScore') || '0');

@@ -4,21 +4,55 @@ require_once 'activities/Alphabet.php';
 require_once 'activities/Listen.php';
 require_once 'activities/Speak.php';
 require_once 'activities/Write.php';
-require_once 'activities/Karaoke.php';
+require_once 'activities/karaoke.php';
 
 $session = new SessionManager();
 
 // Dados - podem vir de um arquivo de configuração ou banco
 $palavras = [
+    // food
     ["word" => "APPLE", "emoji" => "🍎", "translation" => "maçã"],
+    // animals
     ["word" => "DOG",   "emoji" => "🐕", "translation" => "cachorro"],
+    ["word" => "CAT",   "emoji" => "🐱", "translation" => "gato"],
+    ["word" => "BIRD",  "emoji" => "🐦", "translation" => "pássaro"],
+    ["word" => "FISH",  "emoji" => "🐠", "translation" => "peixe"],  
+    ["word" => "LION",  "emoji" => "🦁", "translation" => "Leão"],
+    ["word" => "DUCK",  "emoji" => "🦆", "translation" => "Pato"],
+    ["word" => "TURTLE",  "emoji" => "🐢", "translation" => "Tartaruga"],
+    ["word" => "TIGER",  "emoji" => "🐅", "translation" => "tigre"],
+    ["word" => "BEAR",  "emoji" => "🐻", "translation" => "Urso"],
+    ["word" => "POLAR BEAR",  "emoji" => "🐻‍❄️", "translation" => "Urso Polar"],
+    ["word" => "KOALA",  "emoji" => "🐨", "translation" => "Coala"],
+    ["word" => "BEE",  "emoji" => "🐝", "translation" => "Abelha"],
+    ["word" => "ANT",  "emoji" => "🐜", "translation" => "Formiga"],
+    ["word" => "SNAIL",  "emoji" => "🐌", "translation" => "livro"],
+
     ["word" => "SUN",   "emoji" => "☀️", "translation" => "sol"],
     ["word" => "HOUSE", "emoji" => "🏠", "translation" => "casa"],
-    ["word" => "CAT",   "emoji" => "🐱", "translation" => "gato"],
     ["word" => "CAR",   "emoji" => "🚗", "translation" => "carro"],
-    ["word" => "BIRD",  "emoji" => "🐦", "translation" => "pássaro"],
-    ["word" => "FISH",  "emoji" => "🐠", "translation" => "peixe"],
-    ["word" => "BOOK",  "emoji" => "📚", "translation" => "livro"],
+    ["word" => "TREE", "emoji" => "🌳", "translation" => "árvore"],
+    ["word" => "WATER", "emoji" => "💧", "translation" => "água"],
+    ["word" => "FIRE", "emoji" => "🔥", "translation" => "fogo"],
+    ["word" => "AIR", "emoji" => "💨", "translation" => "ar"],
+    ["word" => "EARTH", "emoji" => "🌍", "translation" => "terra"],
+    ["word" => "MOON", "emoji" => "🌙", "translation" => "lua"],
+    ["word" => "FLOWER", "emoji" => "🌸", "translation" => "flor"],
+    ["word" => "BALL", "emoji" => "⚽", "translation" => "bola"],
+    ["word" => "HAT", "emoji" => "🎩", "translation" => "chapéu"],
+    ["word" => "SHOE", "emoji" => "👟", "translation" => "sapato"],
+    ["word" => "BED", "emoji" => "🛏️", "translation" => "cama"],
+    ["word" => "CHAIR", "emoji" => "🪑", "translation" => "cadeira"],
+    ["word" => "TABLE", "emoji" => "🪵", "translation" => "mesa"],
+    ["word" => "DOOR", "emoji" => "🚪", "translation" => "porta"],
+    ["word" => "WINDOW", "emoji" => "🪟", "translation" => "janela"],
+    ["word" => "BED", "emoji" => "🛏️", "translation" => "cama"],
+    ["word" => "CHAIR", "emoji" => "🪑", "translation" => "cadeira"],
+    ["word" => "TABLE", "emoji" => "🪵", "translation" => "mesa"],
+    ["word" => "DOOR", "emoji" => "🚪", "translation" => "porta"],
+    ["word" => "KEY", "emoji" => "🔑", "translation" => "chave"],
+    ["word" => "PHONE", "emoji" => "📱", "translation" => "telefone"],
+    ["word" => "COMPUTER", "emoji" => "💻", "translation" => "computador"],
     ["word" => "STAR",  "emoji" => "⭐", "translation" => "estrela"]
 ];
 
