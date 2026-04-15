@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Kant Karaoke - Cante junto com o YouTube!</title>
+  <!-- Tailwind CSS + Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    .lyrics-line {
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .lyrics-line.active {
+      color: #f97316;
+      font-weight: 800;
+      transform: scale(1.05);
+      text-shadow: 0 0 4px rgba(249,115,22,0.5);
+    }
+    .karaoke-container {
+      background: linear-gradient(135deg, #f6f9fc 0%, #eef2f7 100%);
+    }
+    /* Animações para o microfone */
+    @keyframes micPulse {
+      0% { transform: scale(1); text-shadow: 0 0 0 #f97316; }
+      50% { transform: scale(1.1); text-shadow: 0 0 20px #f97316; }
+      100% { transform: scale(1); text-shadow: 0 0 0 #f97316; }
+    }
+    .mic-active {
+      animation: micPulse 1s infinite;
+    }
+    /* Scroll personalizado para a letra */
+    .lyrics-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .lyrics-scroll::-webkit-scrollbar-track {
+      background: #2d2d5e;
+      border-radius: 10px;
+    }
+    .lyrics-scroll::-webkit-scrollbar-thumb {
+      background: #f97316;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="karaoke-container min-h-screen text-white">
+
+  <div class="max-w-5xl mx-auto p-4 md:p-6">
+    <!-- Cabeçalho -->
+    <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
+      <a href="home.html" class="bg-gray-800/70 hover:bg-gray-700 transition px-4 py-2 rounded-full flex items-center gap-2 backdrop-blur-sm">
+        ← Voltar
+      </a>
+      <div class="text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text text-transparent">Kant Karaoke</h1>
+        <p class="text-sm text-gray-300">Escolha uma música e cante acompanhando a letra!</p>
+      </div>
+      <div class="flex items-center gap-2 bg-amber-50/20 backdrop-blur-sm px-4 py-2 rounded-full">
+        <span class="text-yellow-400 text-xl">🎤</span>
+        <span id="scoreDisplay" class="font-bold">0 pts</span>
+      </div>
+    </div>
+
+    <!-- Player e letra -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Coluna do vídeo -->
+      <div class="bg-black/40 rounded-2xl p-4 backdrop-blur-sm">
+        <div id="playerContainer" class="aspect-video w-full rounded-xl overflow-hidden shadow-2xl"></div>
+        <div class="flex flex-wrap gap-3 justify-between items-center mt-4">
+          <div class="flex gap-2">
+            <button id="playBtn" class="bg-orange-600 hover:bg-orange-700 px-5 py-2 rounded-full font-bold transition flex items-center gap-2">▶ Play</button>
+            <button id="pauseBtn" class="bg-gray-700 hover:bg-gray-600 px-5 py-2 rounded-full font-bold transition flex items-center gap-2">⏸ Pause</button>
+          </div>
+          <div class="text-sm bg-gray-800/60 px-3 py-1 rounded-full">
+            <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna da letra + busca -->
+      <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-sm flex flex-col">
+        <div class="flex gap-2 mb-4">
+          <input type="text" id="searchInput" placeholder="Digite o nome da música ou artista..." class="flex-1 bg-gray-800 text-white rounded-full px-4 py-2 border border-gray-600 focus:outline-none focus:border-orange-500">
+          <button id="searchBtn" class="bg-orange-600 hover:bg-orange-700 px-5 py-2 rounded-full font-bold transition">Buscar</button>
+        </div>
+        
+        <!-- Lista de sugestões (pré-definidas + busca) -->
+        <div id="suggestions" class="mb-4 flex flex-wrap gap-2">
+          <!-- Sugestões iniciais serão carregadas via JS -->
+        </div>
+
+        <!-- Área da letra -->
+        <div class="flex-1 min-h-[300px] bg-black/30 rounded-xl p-4 overflow-y-auto lyrics-scroll">
+          <div id="lyricsContainer" class="space-y-2 text-center">
+            <p class="text-gray-400 italic">Selecione uma música para ver a letra sincronizada...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Microfone animado e dica -->
+    <div class="mt-6 text-center">
+      <div id="micIcon" class="text-5xl inline-block cursor-pointer transition hover:scale-110">🎤</div>
+      <p class="text-xs text-gray-300 mt-2">Clique no microfone para ativar o modo karaoke (a letra acompanha o tempo)!</p>
+    </div>
+  </div>
+
+  <script>
+    // ==================== DADOS DE EXEMPLO (músicas com letra e timestamps) ====================
+    // Em um sistema real, você pode buscar letras de uma API (ex: LRCLIB, Genius) e sincronizar.
+    // Aqui usamos algumas músicas conhecidas com trechos de letra sincronizada (em segundos).
+    const musicLibrary = {
+      "Shape of You - Ed Sheeran": {
+        videoId: "JGwWNGJdvx8",
+        lyrics: [
+          { time: 15, text: "The club isn't the best place to find a lover" },
+          { time: 19, text: "So the bar is where I go" },
+          { time: 23, text: "Me and my friends at the table doing shots" },
+          { time: 27, text: "Drinking fast and then we talk slow" },
+          { time: 31, text: "And you come over and start up a conversation with just me" },
+          { time: 35, text: "And trust me I'll give it a chance now" },
+          { time: 39, text: "Take my hand, stop, put Van the Man on the jukebox" },
+          { time: 43, text: "And then we start to dance, and now I'm singing like" }
+        ]
+      },
+      "Blinding Lights - The Weeknd": {
+        videoId: "fHI8X4OXluQ",
+        lyrics: [
+          { time: 20, text: "I've been tryna call" },
+          { time: 23, text: "I've been on my own for long enough" },
+          { time: 27, text: "Maybe you can show me how to love, maybe" },
+          { time: 31, text: "I'm going through withdrawals" },
+          { time: 35, text: "You don't even have to do too much" },
+          { time: 39, text: "You can turn me on with just a touch, baby" }
+        ]
+      },
+      "Levitating - Dua Lipa": {
+        videoId: "TUVcZfQe-Kw",
+        lyrics: [
+          { time: 12, text: "If you wanna run away with me, I know a galaxy" },
+          { time: 16, text: "And I can take you for a ride" },
+          { time: 19, text: "I had a premonition that we fell into a rhythm" },
+          { time: 23, text: "Where the music don't stop for life" }
+        ]
+      }
+    };
+
+    // Estado do player
+    let player;
+    let currentVideoId = null;
+    let currentLyrics = [];  // array de {time, text}
+    let intervalId = null;
+    let isKaraokeActive = false;
+
+    // Elementos DOM
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const suggestionsDiv = document.getElementById('suggestions');
+    const lyricsContainer = document.getElementById('lyricsContainer');
+    const playBtn = document.getElementById('playBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const currentTimeSpan = document.getElementById('currentTime');
+    const durationSpan = document.getElementById('duration');
+    const micIcon = document.getElementById('micIcon');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+
+    // Pontuação (simulada para karaoke)
+    let score = parseInt(localStorage.getItem('karaokeScore') || '0');
+    scoreDisplay.innerText = `${score} pts`;
+
+    function updateScoreUI() {
+      scoreDisplay.innerText = `${score} pts`;
+      localStorage.setItem('karaokeScore', score);
+    }
+
+    function addPoints(points) {
+      score += points;
+      updateScoreUI();
+      // Efeito visual de estrela
+      const starToast = document.createElement('div');
+      starToast.className = 'fixed top-20 right-5 bg-yellow-500 text-black px-4 py-2 rounded-full font-bold shadow-lg animate-bounce z-50';
+      starToast.innerText = `+${points} ⭐`;
+      document.body.appendChild(starToast);
+      setTimeout(() => starToast.remove(), 1500);
+    }
+
+    // Carregar sugestões iniciais
+    function loadSuggestions() {
+      suggestionsDiv.innerHTML = '';
+      Object.keys(musicLibrary).forEach(title => {
+        const btn = document.createElement('button');
+        btn.className = 'bg-gray-700 hover:bg-orange-600 text-sm px-3 py-1 rounded-full transition';
+        btn.innerText = title;
+        btn.onclick = () => selectSong(title);
+        suggestionsDiv.appendChild(btn);
+      });
+    }
+
+    // Selecionar música pelo título
+    function selectSong(title) {
+      const song = musicLibrary[title];
+      if (!song) return;
+      currentVideoId = song.videoId;
+      currentLyrics = song.lyrics;
+      renderLyrics(currentLyrics);
+      // Carregar vídeo no player
+      if (player && player.loadVideoById) {
+        player.loadVideoById(currentVideoId);
+        player.playVideo();
+      } else {
+        // Aguardar a API do YouTube carregar
+        window.playerReadyCallback = () => {
+          player.loadVideoById(currentVideoId);
+          player.playVideo();
+        };
+      }
+      // Resetar karaoke
+      stopKaraokeSync();
+      startKaraokeSync();
+    }
+
+    // Renderizar letra na tela
+    function renderLyrics(lyrics) {
+      if (!lyrics || lyrics.length === 0) {
+        lyricsContainer.innerHTML = '<p class="text-gray-400 italic">Letra não disponível para esta música.</p>';
+        return;
+      }
+      let html = '';
+      lyrics.forEach((line, idx) => {
+        html += `<div class="lyrics-line text-lg md:text-xl transition-all p-2 rounded-lg" data-time="${line.time}" data-index="${idx}">${line.text}</div>`;
+      });
+      lyricsContainer.innerHTML = html;
+    }
+
+    // Sincronizar a letra com o tempo atual do vídeo
+    function syncLyrics() {
+      if (!player || !currentLyrics.length || !isKaraokeActive) return;
+      const currentTime = player.getCurrentTime();
+      let activeIndex = -1;
+      for (let i = currentLyrics.length - 1; i >= 0; i--) {
+        if (currentTime >= currentLyrics[i].time) {
+          activeIndex = i;
+          break;
+        }
+      }
+      // Destacar linha ativa
+      const lines = document.querySelectorAll('.lyrics-line');
+      lines.forEach((line, idx) => {
+        if (idx === activeIndex) {
+          line.classList.add('active');
+          // Rolar suavemente para a linha ativa
+          if (line.getBoundingClientRect().top < 0 || line.getBoundingClientRect().bottom > lyricsContainer.clientHeight) {
+            line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          // Se for uma nova linha ativa, dar um pequeno feedback de pontos (opcional)
+          if (line.dataset.lastActive !== 'true') {
+            // Adiciona 1 ponto por linha cantada (a cada vez que chega nela, mas para não repetir, usamos flag)
+            // Evitar repetir na mesma linha
+            if (!line.hasAttribute('data-points-granted')) {
+              addPoints(1);
+              line.setAttribute('data-points-granted', 'true');
+            }
+          }
+          lines.forEach(l => l.setAttribute('data-last-active', 'false'));
+          line.setAttribute('data-last-active', 'true');
+        } else {
+          line.classList.remove('active');
+        }
+      });
+      // Atualizar tempo na interface
+      const minutes = Math.floor(currentTime / 60);
+      const seconds = Math.floor(currentTime % 60);
+      currentTimeSpan.innerText = `${minutes}:${seconds.toString().padStart(2,'0')}`;
+    }
+
+    function startKaraokeSync() {
+      if (intervalId) clearInterval(intervalId);
+      isKaraokeActive = true;
+      micIcon.classList.add('mic-active');
+      intervalId = setInterval(() => {
+        if (player && player.getPlayerState() === 1) { // 1 = playing
+          syncLyrics();
+        }
+      }, 200);
+    }
+
+    function stopKaraokeSync() {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+      isKaraokeActive = false;
+      micIcon.classList.remove('mic-active');
+    }
+
+    // Buscar músicas (simulação – aqui poderia integrar com a API do YouTube Data)
+    function searchMusic() {
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) return;
+      // Filtra as músicas da biblioteca que contêm o termo
+      const results = Object.keys(musicLibrary).filter(title => title.toLowerCase().includes(query));
+      suggestionsDiv.innerHTML = '';
+      if (results.length === 0) {
+        suggestionsDiv.innerHTML = '<span class="text-gray-400 text-sm">Nenhuma música encontrada. Tente "Shape", "Blinding" ou "Levitating".</span>';
+        return;
+      }
+      results.forEach(title => {
+        const btn = document.createElement('button');
+        btn.className = 'bg-gray-700 hover:bg-orange-600 text-sm px-3 py-1 rounded-full transition';
+        btn.innerText = title;
+        btn.onclick = () => selectSong(title);
+        suggestionsDiv.appendChild(btn);
+      });
+    }
+
+    // Inicializar player do YouTube
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('playerContainer', {
+        height: '360',
+        width: '100%',
+        videoId: 'JGwWNGJdvx8',  // vídeo padrão
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+
+    function onPlayerReady(event) {
+      durationSpan.innerText = formatTime(player.getDuration());
+      if (window.playerReadyCallback) {
+        window.playerReadyCallback();
+        delete window.playerReadyCallback;
+      }
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.PLAYING) {
+        if (!isKaraokeActive) startKaraokeSync();
+      } else {
+        if (isKaraokeActive && event.data !== YT.PlayerState.BUFFERING) {
+          // Não paramos o sync, apenas pausamos a atualização automática, mas mantemos ativo
+        }
+      }
+      // Atualizar duração quando disponível
+      if (player.getDuration) {
+        durationSpan.innerText = formatTime(player.getDuration());
+      }
+    }
+
+    function formatTime(seconds) {
+      if (!seconds) return "0:00";
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2,'0')}`;
+    }
+
+    // Eventos dos botões
+    playBtn.onclick = () => {
+      if (player) player.playVideo();
+    };
+    pauseBtn.onclick = () => {
+      if (player) player.pauseVideo();
+    };
+    micIcon.onclick = () => {
+      if (isKaraokeActive) {
+        stopKaraokeSync();
+        micIcon.classList.remove('mic-active');
+      } else {
+        startKaraokeSync();
+      }
+    };
+    searchBtn.onclick = searchMusic;
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') searchMusic();
+    });
+
+    // Inicialização
+    loadSuggestions();
+    // Garantir que a API do YouTube seja carregada
+    window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+    // Caso a API já tenha sido carregada (fallback)
+    if (typeof YT !== 'undefined' && YT.loaded) {
+      onYouTubeIframeAPIReady();
+    }
+  </script>
+</body>
+</html>
