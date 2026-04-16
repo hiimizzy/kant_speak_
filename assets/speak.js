@@ -1,8 +1,25 @@
 const words = [
-  { word: "CAT", emoji: "🐱" }, { word: "DOG", emoji: "🐕" }, { word: "BIRD", emoji: "🐦" },
-  { word: "FISH", emoji: "🐠" }, { word: "APPLE", emoji: "🍎" }, { word: "STAR", emoji: "⭐" },
-  { word: "SUN", emoji: "☀️" }, { word: "BOOK", emoji: "📚" }, { word: "HOUSE", emoji: "🏠" },
-  { word: "FLOWER", emoji: "🌺" }, {word: "GNARLY", emoji: "🤙"}
+  { word: "CAT", emoji: "🐱" }, 
+  { word: "DOG", emoji: "🐕" }, 
+  { word: "BIRD", emoji: "🐦" },
+  { word: "FISH", emoji: "🐠" }, 
+  { word: "APPLE", emoji: "🍎" }, 
+  { word: "STAR", emoji: "⭐" },
+  { word: "SUN", emoji: "☀️" }, 
+  { word: "BOOK", emoji: "📚" }, 
+  { word: "HOUSE", emoji: "🏠" },
+  { word: "FLOWER", emoji: "🌺" }, 
+  {word: "GNARLY", emoji: "🤙"},
+  { word: "LION", emoji: "🦁", translation: "leão" },
+  { word: "TIGER", emoji: "🐯", translation: "tigre" },
+  { word: "KOALA", emoji: "🐨", translation: "coala" },
+  { word: "BEE", emoji: "🐝", translation: "abelha" },
+  { word: "ANT", emoji: "🐜", translation: "formiga" },
+  { word: "BEAR", emoji: "🐻", translation: "urso" },
+  { word: "SNAIL", emoji: "🐌", translation: "caracol" },
+  { word: "RABBIT", emoji: "🐰", translation: "coelho" },
+  { word: "JELLYFISH", emoji: "🪼", translation: "água-viva" },
+  { word: "SHARK", emoji: "🦈", translation: "tubarão" }
 ];
 let currentIndex = 0;
 let score = parseInt(localStorage.getItem('totalScore') || '0');

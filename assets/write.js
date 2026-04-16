@@ -8,6 +8,16 @@ const words = [
   { word: "FISH", emoji: "🐠", translation: "peixe" },
   { word: "HOUSE", emoji: "🏠", translation: "casa" },
   { word: "BIRD", emoji: "🐦", translation: "pássaro" },
+    { word: "LION", emoji: "🦁", translation: "leão" },
+  { word: "TIGER", emoji: "🐯", translation: "tigre" },
+  { word: "KOALA", emoji: "🐨", translation: "coala" },
+  { word: "BEE", emoji: "🐝", translation: "abelha" },
+  { word: "ANT", emoji: "🐜", translation: "formiga" },
+  { word: "BEAR", emoji: "🐻", translation: "urso" },
+  { word: "SNAIL", emoji: "🐌", translation: "caracol" },
+  { word: "RABBIT", emoji: "🐰", translation: "coelho" },
+  { word: "JELLYFISH", emoji: "🪼", translation: "água-viva" },
+  { word: "SHARK", emoji: "🦈", translation: "tubarão" },
   { word: "FLOWER", emoji: "🌺", translation: "flor" }
 ];
 let currentIndex = 0;

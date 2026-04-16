@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Kant Speak - Draw</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    canvas {
+      border: 3px solid #ddd;
+      border-radius: 16px;
+      background: white;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+    .feedback-toast { animation: fadeOut 2s forwards; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen p-4 md:p-6">
+  <div class="max-w-lg mx-auto flex flex-col gap-6">
+    <!-- Cabeçalho -->
+    <div class="flex items-center justify-between bg-white/80 backdrop-blur-sm p-3 rounded-2xl shadow-sm">
+      <a href="home.html" class="bg-gray-100 hover:bg-gray-200 transition-colors p-2 rounded-full w-10 h-10 flex items-center justify-center text-2xl">←</a>
+      <div class="flex items-center gap-3 bg-amber-50 px-4 py-2 rounded-full">
+        <span class="text-yellow-500 text-xl">⭐</span>
+        <span id="scoreValue" class="font-bold text-gray-800 text-xl">0</span>
+      </div>
+    </div>
+
+    <h2 class="text-3xl font-bold text-center text-gray-700">🎨 Desenhe a palavra!</h2>
+
+    <!-- Cartão principal -->
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 flex flex-col items-center gap-6">
+      <div class="text-center">
+        <div class="text-6xl" id="wordEmoji">🐱</div>
+        <div class="text-4xl font-black text-blue-600 mt-2" id="wordText">CAT</div>
+        <p class="text-gray-500 mt-1" id="wordTranslation">(gato)</p>
+      </div>
+
+      <canvas id="drawCanvas" width="400" height="300" class="w-full max-w-md h-auto shadow-md"></canvas>
+
+      <div class="flex gap-4 flex-wrap justify-center">
+        <button id="clearBtn" class="bg-gray-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-600 transition">🗑️ Limpar</button>
+        <button id="completeBtn" class="bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 transition">✅ Completei</button>
+        <button id="nextBtn" class="bg-amber-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-amber-600 transition">⏩ Próxima</button>
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    <div id="feedbackContainer" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none"></div>
+
+    <!-- Estrelas -->
+    <div class="bg-white/70 rounded-2xl p-3 flex justify-center gap-2 shadow-sm" id="starsContainer">
+      <span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span>
+    </div>
+  </div>
+
+  <script src="eventos/draw.js"></script>
+</body>
+</html>
