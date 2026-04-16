@@ -17,6 +17,7 @@ $palavras = [
     ["word" => "PINEAPPLE", "emoji" => "🍍", "translation" => "abacaxi"],
     ["word" => "GRAPE", "emoji" => "🍇", "translation" => "uva"],
     ["word" => "STRAWBERRY", "emoji" => "🍓", "translation" => "morango"],
+    ["word" => "ORANGE", "emoji" => "🍊", "translation", => "laranja"],
     // animals
     ["word" => "DOG",   "emoji" => "🐕", "translation" => "cachorro"],
     ["word" => "CAT",   "emoji" => "🐱", "translation" => "gato"],
@@ -53,8 +54,8 @@ $palavras = [
     ["word" => "WINDOW", "emoji" => "🪟", "translation" => "janela"],
     ["word" => "BED", "emoji" => "🛏️", "translation" => "cama"],
     ["word" => "CHAIR", "emoji" => "🪑", "translation" => "cadeira"],
-    ["word" => "TABLE", "emoji" => "🪵", "translation" => "mesa"],
-    ["word" => "DOOR", "emoji" => "🚪", "translation" => "porta"],
+    ["word" => "TABLE", "emoji" => "", "translation" => "mesa"],
+    ["word" => "COFFEE", "emoji" => "☕", "translation" => "café"],
     ["word" => "KEY", "emoji" => "🔑", "translation" => "chave"],
     ["word" => "PHONE", "emoji" => "📱", "translation" => "telefone"],
     ["word" => "COMPUTER", "emoji" => "💻", "translation" => "computador"],
@@ -63,11 +64,7 @@ $palavras = [
 
 $letras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 
-$musicas = [
-    ["titulo" => "Twinkle Twinkle Little Star", "letra" => "Twinkle twinkle little star\nHow I wonder what you are\nUp above the world so high\nLike a diamond in the sky"],
-    ["titulo" => "Old MacDonald Had a Farm", "letra" => "Old MacDonald had a farm\nE-I-E-I-O\nAnd on his farm he had a cow\nE-I-E-I-O"],
-];
-
+$musicas = []; // definir músicas
 $activities = [
     'alphabet' => new Alphabet($letras, $session),
     'listen'   => new Listen($palavras, $session),
@@ -95,16 +92,17 @@ try {
         case 'getItem':
             echo json_encode(['success' => true, 'item' => $act->getCurrentItem()]);
             break;
-        case 'check':
+case 'check':
             $act->process($_POST);
             $feedback = $session->getFeedbackAndClear();
-            $score = $session->getScore(); 
+            $score = $session->getScore();
             echo json_encode([
-            'success' => true, 
-            'feedback' => $feedback, 
-            'score' => $score
-    ]);
-    break;
+                'success' => true,
+                'feedback' => $feedback,
+                'score' => $score
+            ]);
+            break;
+        case 'next':
             $act->advance();
             echo json_encode(['success' => true, 'item' => $act->getCurrentItem()]);
             break;
