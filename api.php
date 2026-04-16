@@ -93,12 +93,15 @@ try {
             echo json_encode(['success' => true, 'item' => $act->getCurrentItem()]);
             break;
         case 'check':
-$input = $_POST;\nunset($input['action'], $input['activity']);\n$act->process($input);
-            $feedback = $session->getFeedbackAndClear();
-            $score = $session->getScore();
-            echo json_encode(['success' => true, 'feedback' => $feedback, 'score' => $score]);
-            break;
-        case 'next':
+    $act->process($_POST);
+    $feedback = $session->getFeedbackAndClear();
+    $score = $session->getScore(); 
+    echo json_encode([
+        'success' => true, 
+        'feedback' => $feedback, 
+        'score' => $score
+    ]);
+    break;
             $act->advance();
             echo json_encode(['success' => true, 'item' => $act->getCurrentItem()]);
             break;
