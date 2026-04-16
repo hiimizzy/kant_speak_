@@ -5,6 +5,7 @@ require_once 'activities/Listen.php';
 require_once 'activities/Speak.php';
 require_once 'activities/Write.php';
 require_once 'activities/karaoke.php';
+require_once 'activities/Draw.php'
 
 $session = new SessionManager();
 
@@ -69,6 +70,7 @@ $activities = [
     'speak'    => new Speak($palavras, $session),
     'write'    => new Write($palavras, $session),
     'karaoke'  => new Karaoke($musicas, $session),
+    'draw'     => new Draw($palavras, $session)
 ];
 
 header('Content-Type: application/json');
