@@ -14,6 +14,9 @@ $session = new SessionManager();
 $palavras = [
     // food
     ["word" => "APPLE", "emoji" => "🍎", "translation" => "maçã"],
+    ["word" => "PINEAPPLE", "emoji" => "🍍", "translation" => "abacaxi"],
+    ["word" => "GRAPE", "emoji" => "🍇", "translation" => "uva"],
+    ["word" => "STRAWBERRY", "emoji" => "🍓", "translation" => "morango"],
     // animals
     ["word" => "DOG",   "emoji" => "🐕", "translation" => "cachorro"],
     ["word" => "CAT",   "emoji" => "🐱", "translation" => "gato"],
@@ -45,7 +48,7 @@ $palavras = [
     ["word" => "SHOE", "emoji" => "👟", "translation" => "sapato"],
     ["word" => "BED", "emoji" => "🛏️", "translation" => "cama"],
     ["word" => "CHAIR", "emoji" => "🪑", "translation" => "cadeira"],
-    ["word" => "TABLE", "emoji" => "🪵", "translation" => "mesa"],
+    ["word" => "RAINBOW", "emoji" => "🌈", "translation" => "arco iris"],
     ["word" => "DOOR", "emoji" => "🚪", "translation" => "porta"],
     ["word" => "WINDOW", "emoji" => "🪟", "translation" => "janela"],
     ["word" => "BED", "emoji" => "🛏️", "translation" => "cama"],
@@ -93,13 +96,13 @@ try {
             echo json_encode(['success' => true, 'item' => $act->getCurrentItem()]);
             break;
         case 'check':
-    $act->process($_POST);
-    $feedback = $session->getFeedbackAndClear();
-    $score = $session->getScore(); 
-    echo json_encode([
-        'success' => true, 
-        'feedback' => $feedback, 
-        'score' => $score
+            $act->process($_POST);
+            $feedback = $session->getFeedbackAndClear();
+            $score = $session->getScore(); 
+            echo json_encode([
+            'success' => true, 
+            'feedback' => $feedback, 
+            'score' => $score
     ]);
     break;
             $act->advance();
