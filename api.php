@@ -1,12 +1,13 @@
 <?php
-require_once 'core/SessionManager.php';
-require_once 'activities/Alphabet.php';
-require_once 'activities/Listen.php';
-require_once 'activities/Speak.php';
-require_once 'activities/Write.php';
-require_once 'activities/karaoke.php';
-require_once 'activities/Draw.php'
-
+// Caminhos absolutos
+require_once __DIR__ . '/core/SessionManager.php';
+require_once __DIR__ . '/core/Atividade.php';
+require_once __DIR__ . '/activities/Alphabet.php';
+require_once __DIR__ . '/activities/Listen.php';
+require_once __DIR__ . '/activities/Speak.php';
+require_once __DIR__ . '/activities/Write.php';
+require_once __DIR__ . '/activities/Karaoke.php';
+require_once __DIR__ . '/activities/Draw.php'; //
 $session = new SessionManager();
 
 // Dados - podem vir de um arquivo de configuração ou banco
@@ -77,47 +78,36 @@ header('Content-Type: application/json');
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 $activity = $_POST['activity'] ?? $_GET['activity'] ?? '';
+try {
+    $action = $_POST['action'] ?? $_GET['action'] ?? '';
+    $activity = $_POST['activity'] ?? $_GET['activity'] ?? '';
 
-if (!$action || !isset($activities[$activity])) {
-    echo json_encode(['error' => 'Ação ou atividade inválida']);
-    exit;
-}
+    if (!$action || !isset($activities[$activity])) {
+        throw new Exception('Ação ou atividade inválida');
+    }
 
-$act = $activities[$activity];
+    $act = $activities[$activity];
 
-switch ($action) {
-    case 'getItem':
-        $item = $act->getCurrentItem();
-        echo json_encode(['success' => true, 'item' => $item]);
-        break;
-
-    case 'check':
-        $resposta = $_POST['resposta'] ?? '';
-        $act->process(['resposta' => $resposta]);
-        $feedback = $session->getFeedbackAndClear();
-        $score = $session->getScore();
-        echo json_encode(['success' => true, 'feedback' => $feedback, 'score' => $score]);
-        break;
-
-    case 'next':
-        $act->advance();
-        $newItem = $act->getCurrentItem();
-        $score = $session->getScore();
-        echo json_encode(['success' => true, 'item' => $newItem, 'score' => $score]);
-        break;
-
-    case 'getScore':
-        echo json_encode(['score' => $session->getScore()]);
-        break;
-
-    case 'complete' : // específico para karaoke
-        $act->process(['complete' => 1]);
-        $feedback = $session->getFeedbackAndClear();
-        $score = $session->getScore();
-        $newItem = $act->getCurrentItem();
-        echo json_encode(['success' => true, 'feedback' => $feedback, 'score' => $score, 'item' => $newItem]);
-        break;
-
-    default:
-        echo json_encode(['error' => 'Ação desconhecida']);
+    switch ($action) {
+        case 'getItem':
+            echo json_encode(['success' => true, 'item' => $act->getCurrentItem()]);
+            break;
+        case 'check':
+$input = $_POST;\nunset($input['action'], $input['activity']);\n$act->process($input);
+            $feedback = $session->getFeedbackAndClear();
+            $score = $session->getScore();
+            echo json_encode(['success' => true, 'feedback' => $feedback, 'score' => $score]);
+            break;
+        case 'next':
+            $act->advance();
+            echo json_encode(['success' => true, 'item' => $act->getCurrentItem()]);
+            break;
+        case 'getScore':
+            echo json_encode(['score' => $session->getScore()]);
+            break;
+        default:
+            throw new Exception('Ação desconhecida');
+    }
+} catch (Throwable $e) {
+    echo json_encode(['error' => $e->getMessage()]);
 }
