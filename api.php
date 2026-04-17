@@ -6,18 +6,18 @@ require_once __DIR__ . '/activities/Alphabet.php';
 require_once __DIR__ . '/activities/Listen.php';
 require_once __DIR__ . '/activities/Speak.php';
 require_once __DIR__ . '/activities/Write.php';
-require_once __DIR__ . '/activities/Karaoke.php';
-require_once __DIR__ . '/activities/Draw.php'; //
+// require_once __DIR__ . '/activities/Karaoke.php';
+require_once __DIR__ . '/activities/Draw.php'; 
+
 $session = new SessionManager();
 
-// Dados - podem vir de um arquivo de configuração ou banco
+// Dados PRIMEIRO
 $palavras = [
     // food
     ["word" => "APPLE", "emoji" => "🍎", "translation" => "maçã"],
     ["word" => "PINEAPPLE", "emoji" => "🍍", "translation" => "abacaxi"],
     ["word" => "GRAPE", "emoji" => "🍇", "translation" => "uva"],
     ["word" => "STRAWBERRY", "emoji" => "🍓", "translation" => "morango"],
-    ["word" => "ORANGE", "emoji" => "🍊", "translation", => "laranja"],
     // animals
     ["word" => "DOG",   "emoji" => "🐕", "translation" => "cachorro"],
     ["word" => "CAT",   "emoji" => "🐱", "translation" => "gato"],
@@ -32,7 +32,7 @@ $palavras = [
     ["word" => "KOALA",  "emoji" => "🐨", "translation" => "Coala"],
     ["word" => "BEE",  "emoji" => "🐝", "translation" => "Abelha"],
     ["word" => "ANT",  "emoji" => "🐜", "translation" => "Formiga"],
-    ["word" => "SNAIL",  "emoji" => "🐌", "translation" => "livro"],
+    ["word" => "SNAIL",  "emoji" => "🐌", "translation" => "caracol"], 
 
     ["word" => "SUN",   "emoji" => "☀️", "translation" => "sol"],
     ["word" => "HOUSE", "emoji" => "🏠", "translation" => "casa"],
@@ -52,10 +52,7 @@ $palavras = [
     ["word" => "RAINBOW", "emoji" => "🌈", "translation" => "arco iris"],
     ["word" => "DOOR", "emoji" => "🚪", "translation" => "porta"],
     ["word" => "WINDOW", "emoji" => "🪟", "translation" => "janela"],
-    ["word" => "BED", "emoji" => "🛏️", "translation" => "cama"],
-    ["word" => "CHAIR", "emoji" => "🪑", "translation" => "cadeira"],
-    ["word" => "TABLE", "emoji" => "", "translation" => "mesa"],
-    ["word" => "COFFEE", "emoji" => "☕", "translation" => "café"],
+    ["word" => "TABLE", "emoji" => "🪵", "translation" => "mesa"],
     ["word" => "KEY", "emoji" => "🔑", "translation" => "chave"],
     ["word" => "PHONE", "emoji" => "📱", "translation" => "telefone"],
     ["word" => "COMPUTER", "emoji" => "💻", "translation" => "computador"],
@@ -64,7 +61,8 @@ $palavras = [
 
 $letras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 
-$musicas = []; // definir músicas
+// $musicas = []; 
+
 $activities = [
     'alphabet' => new Alphabet($letras, $session),
     'listen'   => new Listen($palavras, $session),
@@ -78,12 +76,10 @@ header('Content-Type: application/json');
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 $activity = $_POST['activity'] ?? $_GET['activity'] ?? '';
-try {
-    $action = $_POST['action'] ?? $_GET['action'] ?? '';
-    $activity = $_POST['activity'] ?? $_GET['activity'] ?? '';
 
+try {
     if (!$action || !isset($activities[$activity])) {
-        throw new Exception('Ação ou atividade inválida');
+        throw new Exception('Ação ou atividade inválida: ' . $action . ' / ' . $activity);
     }
 
     $act = $activities[$activity];
@@ -92,13 +88,13 @@ try {
         case 'getItem':
             echo json_encode(['success' => true, 'item' => $act->getCurrentItem()]);
             break;
-case 'check':
+        case 'check':
             $act->process($_POST);
             $feedback = $session->getFeedbackAndClear();
             $score = $session->getScore();
             echo json_encode([
-                'success' => true,
-                'feedback' => $feedback,
+                'success' => true, 
+                'feedback' => $feedback, 
                 'score' => $score
             ]);
             break;
@@ -110,8 +106,11 @@ case 'check':
             echo json_encode(['score' => $session->getScore()]);
             break;
         default:
-            throw new Exception('Ação desconhecida');
+            throw new Exception('Ação desconhecida: ' . $action);
     }
 } catch (Throwable $e) {
+    header('Content-Type: application/json');
     echo json_encode(['error' => $e->getMessage()]);
 }
+?>
+

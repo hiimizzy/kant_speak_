@@ -27,6 +27,7 @@ async function fetchCurrentItem() {
       document.getElementById('wordTranslation').innerText = `(${currentItem.translation})`;
     } else {
       console.error('Erro ao buscar item:', data);
+      showFeedback('❌ Erro ao carregar palavra: ' + (data.error || ''));
     }
   } catch (err) {
     console.error('fetchCurrentItem:', err);
@@ -44,6 +45,7 @@ async function fetchScore() {
       updateStars(currentScore);
     } else {
       console.error('Resposta de score inválida:', data);
+      showFeedback('❌ Erro ao buscar pontuação');
     }
   } catch (err) {
     console.error('fetchScore:', err);
@@ -61,16 +63,14 @@ async function completeDraw() {
     console.log('Resposta do servidor:', data);
     if (data.success) {
       showFeedback('✅ ' + data.feedback);
-      // Atualiza com o novo score retornado
       if (data.score !== undefined) {
         currentScore = data.score;
         scoreSpan.innerText = currentScore;
         updateStars(currentScore);
       } else {
-        // Se o score não veio, busca novamente
         await fetchScore();
       }
-      await fetchCurrentItem(); // já avançou no backend
+      await fetchCurrentItem();
       clearCanvas();
     } else {
       showFeedback('❌ ' + (data.error || 'Erro desconhecido'));
@@ -153,8 +153,12 @@ function updateStars(score) {
   starSpans.forEach((star, idx) => {
     if (idx < stars) {
       star.classList.add('lit');
+      star.style.opacity = '1';
+      star.style.filter = 'drop-shadow(0 0 4px gold)';
     } else {
       star.classList.remove('lit');
+      star.style.opacity = '0.3';
+      star.style.filter = 'none';
     }
   });
 }
@@ -188,6 +192,7 @@ function initEvents() {
 async function init() {
   await fetchCurrentItem();
   await fetchScore();
+  await nextWord();
   initEvents();
 }
 
