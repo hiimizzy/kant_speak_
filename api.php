@@ -8,6 +8,7 @@ require_once __DIR__ . '/activities/Speak.php';
 require_once __DIR__ . '/activities/Write.php';
 // require_once __DIR__ . '/activities/Karaoke.php';
 require_once __DIR__ . '/activities/Draw.php'; 
+require_once __DIR__ . '/activities/ISpy.php';
 
 $session = new SessionManager();
 
@@ -59,6 +60,15 @@ $palavras = [
     ["word" => "STAR",  "emoji" => "⭐", "translation" => "estrela"]
 ];
 
+$spyItems = [
+    ["letter" => "A", "word" => "Apple",   "emoji" => "🍎", "hint" => "starts with A, it's a red fruit"],
+    ["letter" => "B", "word" => "Ball",    "emoji" => "⚽", "hint" => "starts with B, you can kick it"],
+    ["letter" => "C", "word" => "Cat",     "emoji" => "🐱", "hint" => "starts with C, it says meow"],
+    ["letter" => "D", "word" => "Dog",     "emoji" => "🐕", "hint" => "starts with D, it barks"],
+    ["letter" => "S", "word" => "Sun",     "emoji" => "☀️", "hint" => "starts with S, it shines in the sky"],
+    ["letter" => "F", "word" => "Fish",    "emoji" => "🐠", "hint" => "starts with F, it swims"],
+];
+
 $letras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 
 // $musicas = []; 
@@ -68,8 +78,9 @@ $activities = [
     'listen'   => new Listen($palavras, $session),
     'speak'    => new Speak($palavras, $session),
     'write'    => new Write($palavras, $session),
-    'karaoke'  => new Karaoke($musicas, $session),
-    'draw'     => new Draw($palavras, $session)
+    // 'karaoke'  => new Karaoke($musicas, $session),
+    'draw'     => new Draw($palavras, $session),
+    'ispy'     => new ISpy($spyItems, $session),
 ];
 
 header('Content-Type: application/json');
