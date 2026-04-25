@@ -61,12 +61,12 @@ $palavras = [
 ];
 
 $spyItems = [
-    ["letter" => "A", "word" => "Apple",   "emoji" => "🍎", "hint" => "starts with A, it's a red fruit"],
-    ["letter" => "B", "word" => "Ball",    "emoji" => "⚽", "hint" => "starts with B, you can kick it"],
-    ["letter" => "C", "word" => "Cat",     "emoji" => "🐱", "hint" => "starts with C, it says meow"],
-    ["letter" => "D", "word" => "Dog",     "emoji" => "🐕", "hint" => "starts with D, it barks"],
-    ["letter" => "S", "word" => "Sun",     "emoji" => "☀️", "hint" => "starts with S, it shines in the sky"],
-    ["letter" => "F", "word" => "Fish",    "emoji" => "🐠", "hint" => "starts with F, it swims"],
+    ["letter" => "A", "word" => "Apple", "hint" => "starts with A, it's a red fruit"],
+    ["letter" => "B", "word" => "Ball", "hint" => "starts with B, you can kick it"],
+    ["letter" => "C", "word" => "Cat", "hint" => "starts with C, it says meow"],
+    ["letter" => "D", "word" => "Dog", "hint" => "starts with D, it barks"],
+    ["letter" => "S", "word" => "Sun", "hint" => "starts with S, it shines in the sky"],
+    ["letter" => "F", "word" => "Fish", "hint" => "starts with F, it swims"],
 ];
 
 $letras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
