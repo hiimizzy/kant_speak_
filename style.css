@@ -213,6 +213,7 @@ body {
   .act-btn.listen   { background: linear-gradient(135deg, #5CB85C, #3E8E3E); }
   .act-btn.speak    { background: linear-gradient(135deg, #F5A623, #D4881A); }
   .act-btn.write    { background: linear-gradient(135deg, #9B59B6, #7D3C98); }
+  .act-btn.ispy {background: linear-gradient(135deg, #3aa0d8, #5fbf8f);}
   .act-btn:hover { transform: translateY(-4px); }
 
   /* ===== ACTIVITY SCREEN ===== */
