@@ -65,12 +65,24 @@ $spyItems = [
     ["letter" => "B", "word" => "Ball", "hint" => "starts with B, you can kick it"],
     ["letter" => "C", "word" => "Cat", "hint" => "starts with C, it says meow"],
     ["letter" => "D", "word" => "Dog", "hint" => "starts with D, it barks"],
-    ["letter" => "S", "word" => "Sun", "hint" => "starts with S, it shines in the sky"],
+    ["letter" => "E", "word" => "Elephant", "hint" => "starts with E, it has a trunk"],  
     ["letter" => "F", "word" => "Fish", "hint" => "starts with F, it swims"],
-    ["letter" => "T", "word" => "Tree", "hint" => "starts with T, it has leaves"],
+    ["letter" => "G", "word" => "Giraffe", "hint" => "starts with G, it has a long neck"],
+    ["letter" => "I", "word" => "Ice Cream", "hint" => "starts with I, it's cold and sweet"],
     ["letter" => "H", "word" => "House", "hint" => "starts with H, it's where you live"],
     ["letter" => "W", "word" => "Water", "hint" => "starts with W, you drink it"],
-    ["letter" => "M", "word" => "Moon", "hint" => "starts with M, it shines at night"]
+    ["letter" => "M", "word" => "Moon", "hint" => "starts with M, it shines at night"],
+    ["letter" => "R", "word" => "Rainbow", "hint" => "starts with R, it has many colors"],
+    ["letter" => "K", "word" => "Key", "hint" => "starts with K, it opens doors"],
+    ["letter" => "P", "word" => "Phone", "hint" => "starts with P, you use it to call"],
+    ["letter" => "R", "word" => "Robot", "hint" => "starts with R, you use it to work and play"],
+    ["letter" => "S", "word" => "Sun", "hint" => "starts with S, it shines in the sky"],
+    ["letter" => "T", "word" => "Tree", "hint" => "starts with T, it has leaves"],
+    ["letter" => "U", "word" => "Umbrella", "hint" => "starts with U, you use it when it rains"],
+    ["letter" => "V", "word" => "Violin", "hint" => "starts with V, it's a musical instrument"],
+    ["letter" => "X", "word" => "Xylophone", "hint" => "starts with X, it's a musical instrument with bars"],
+    ["letter" => "Y", "word" => "Yak", "hint" => "starts with Y, it's a large animal with long hair"],
+    ["letter" => "Z", "word" => "Zebra", "hint" => "starts with Z, it has black and white stripes"]
 ];
 
 $letras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
