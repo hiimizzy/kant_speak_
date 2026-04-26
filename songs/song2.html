@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kant Speak - Listen</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+    .feedback-toast { animation: fadeOut 2s forwards; }
+    .bounce-in { animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      80% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen p-4 md:p-6">
+  <div class="max-w-lg mx-auto flex flex-col gap-6">
+    <div class="flex items-center justify-between bg-white/80 backdrop-blur-sm p-3 rounded-2xl shadow-sm">
+      <a href="../playlist.html" class="bg-gray-100 hover:bg-gray-200 transition-colors p-2 rounded-full w-10 h-10 flex items-center justify-center text-2xl">←</a>
+      
+    </div>
+    <h2 class="text-3xl font-bold text-center text-gray-700">🎤 Sing!</h2>
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 flex flex-col items-center gap-6">
+      <div id="revealArea" class="text-center hidden">
+      </div>
+      <div class="flex gap-4 flex-wrap justify-center">       
+        <iframe width="500" height="315" src="https://www.youtube.com/embed/eegWzglBMh0?si=dCEb1z8urre3eLMP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+    <div id="feedbackContainer" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none"></div>
+    <div class="bg-white/70 rounded-2xl p-3 flex justify-center gap-2 shadow-sm" id="starsContainer">
+      <span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span>
+    </div>
+  </div>
+</body>
+</html>
