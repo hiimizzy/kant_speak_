@@ -67,6 +67,10 @@ $spyItems = [
     ["letter" => "D", "word" => "Dog", "hint" => "starts with D, it barks"],
     ["letter" => "S", "word" => "Sun", "hint" => "starts with S, it shines in the sky"],
     ["letter" => "F", "word" => "Fish", "hint" => "starts with F, it swims"],
+    ["letter" => "T", "word" => "Tree", "hint" => "starts with T, it has leaves"],
+    ["letter" => "H", "word" => "House", "hint" => "starts with H, it's where you live"],
+    ["letter" => "W", "word" => "Water", "hint" => "starts with W, you drink it"],
+    ["letter" => "M", "word" => "Moon", "hint" => "starts with M, it shines at night"]
 ];
 
 $letras = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
