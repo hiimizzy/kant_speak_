@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Math Builder - Kant Speak</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Nunito', sans-serif; user-select: none; touch-action: manipulation; }
+    .drag-item {
+      cursor: grab;
+      transition: transform 0.1s;
+    }
+    .drag-item:active { cursor: grabbing; }
+    .drop-zone {
+      background-color: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 1rem;
+      transition: all 0.2s;
+    }
+    .drop-zone.drag-over {
+      background-color: #fef9c3;
+      border-color: #eab308;
+    }
+    .number-palette {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    .number-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 0.75rem 1.25rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen p-4">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4 bg-white/80 backdrop-blur p-3 rounded-2xl">
+      <a href="home.html" class="bg-gray-200 hover:bg-gray-300 rounded-full p-2 w-10 h-10 flex items-center justify-center">←</a>
+      <div class="bg-amber-100 px-4 py-2 rounded-full font-bold">⭐ <span id="scoreValue">0</span></div>
+    </div>
+
+    <h1 class="text-3xl font-black text-center text-indigo-600 mb-2">🧮 Math Builder</h1>
+    <p class="text-center text-gray-500 mb-6">Arraste números e operadores para montar uma conta. Depois arraste a resposta!</p>
+
+    <!-- Área de montagem (drop zones) -->
+    <div class="bg-white/60 rounded-2xl p-5 mb-8">
+      <div class="flex flex-wrap justify-center items-center gap-4 mb-6">
+        <!-- Número 1 -->
+        <div id="dropNum1" class="drop-zone w-28 h-28 flex items-center justify-center text-3xl font-bold" data-zone="num1">?</div>
+        <!-- Operador -->
+        <div id="dropOperator" class="drop-zone w-20 h-28 flex items-center justify-center text-3xl font-bold" data-zone="operator">?</div>
+        <!-- Número 2 -->
+        <div id="dropNum2" class="drop-zone w-28 h-28 flex items-center justify-center text-3xl font-bold" data-zone="num2">?</div>
+        <span class="text-3xl">=</span>
+        <!-- Resposta -->
+        <div id="dropAnswer" class="drop-zone w-28 h-28 flex items-center justify-center text-3xl font-bold" data-zone="answer">?</div>
+      </div>
+      <div class="flex justify-center gap-4">
+        <button id="checkBtn" class="bg-green-600 text-white px-8 py-3 rounded-full font-bold text-xl shadow-md">✅ Verificar</button>
+        <button id="clearBtn" class="bg-gray-500 text-white px-8 py-3 rounded-full font-bold text-xl shadow-md">🗑️ Limpar</button>
+      </div>
+    </div>
+
+    <!-- Paleta de peças arrastáveis (números e operadores) -->
+    <div class="bg-white/70 rounded-2xl p-5 shadow-lg">
+      <h2 class="text-xl font-bold text-center mb-4">🔢 Arraste os blocos para dentro da conta</h2>
+      <div id="palette" class="number-palette">
+        <!-- gerado por JS -->
+      </div>
+    </div>
+
+    <div id="feedbackContainer" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 pointer-events-none"></div>
+  </div>
+
+  <script src="eventos/math.js"></script>
+</body>
+</html>

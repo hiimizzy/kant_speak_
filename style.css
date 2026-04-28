@@ -747,7 +747,20 @@ body {
   letter-spacing: 6px;
 }
 
-/* ===== NAVIGATION DOTS ===== */
+/* math  */
+.feedback-toast {
+  animation: fadeOut 2s forwards;
+}
+@keyframes fadeOut {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+.drag-over {
+  background-color: #fef9c3;
+  border-color: #eab308;
+}
+
+/*  NAVIGATION DOTS  */
 .nav-dots {
   display: flex;
   gap: 10px;
@@ -772,7 +785,7 @@ body {
   background: var(--green);
 }
 
-/* ===== SCORE POPUP ===== */
+/*  SCORE POPUP  */
 .score-popup {
   position: fixed;
   top: 20px;
@@ -808,7 +821,7 @@ body {
   }
 }
 
-/* ===== RESPONSIVE ===== */
+/*  RESPONSIVE  */
 @media (max-width: 500px) {
   .activity-grid {
     grid-template-columns: 1fr 1fr;
@@ -833,7 +846,7 @@ body {
   }
 }
 
-/* ===== STARS ===== */
+/*  STARS  */
 .stars {
   display: flex;
   gap: 6px;
