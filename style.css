@@ -8,6 +8,7 @@
 /* Home page */
 body {
   background: linear-gradient(135deg, #f6f9fc 0%, #eef2f7 100%);
+  padding-top: 60px;
 }
 
 .btn-module {
@@ -60,24 +61,6 @@ body {
   color: #eef2f7;
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-
-  100% {
-    transform: translateY(0px);
-  }
-}
-
 .btn-module i {
   font-size: 2.5rem;
   margin-bottom: 0.25rem;
@@ -108,11 +91,6 @@ body {
 
 .container {
   text-align: center;
-}
-
-.logo {
-  width: 15px;
-  margin-bottom: 10px;
 }
 
 .title {
@@ -202,7 +180,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== SCREENS ===== */
+/* SCREENS  */
 .screen {
   display: none;
   min-height: 100vh;
@@ -233,10 +211,6 @@ body {
   letter-spacing: -1px;
 }
 
-.logo span {
-  color: var(--yellow);
-}
-
 .hud {
   display: flex;
   gap: 12px;
@@ -259,7 +233,7 @@ body {
   font-size: 1.1rem;
 }
 
-/* ===== CARD ===== */
+/* CARD  */
 .card {
   background: var(--card);
   border-radius: var(--radius);
@@ -295,25 +269,6 @@ body {
   font-size: 1.2rem;
   color: var(--muted);
   margin-top: 8px;
-}
-
-.menu-mascot {
-  font-size: 5rem;
-  display: block;
-  margin-bottom: 12px;
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-
-  0%,
-  100% {
-    transform: translateY(0)
-  }
-
-  50% {
-    transform: translateY(-12px)
-  }
 }
 
 /* User form */
