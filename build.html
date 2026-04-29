@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Build a Word - Kant Speak</title>
+  <link rel="shortcut icon" href="img/autismo.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Nunito', sans-serif; user-select: none; }
+    .syllable-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 0.75rem 1.25rem;
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      cursor: grab;
+      transition: transform 0.1s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      min-width: 100px;
+    }
+    .syllable-card:active { cursor: grabbing; }
+    .syllable-card.dragging { opacity: 0.5; }
+    .drop-zone {
+      background-color: #f1f5f9;
+      border: 2px dashed #94a3b8;
+      border-radius: 1.5rem;
+      min-width: 100px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .drop-zone.drag-over {
+      background-color: #fef9c3;
+      border-color: #eab308;
+    }
+    .drop-zone.filled {
+      background-color: #dcfce7;
+      border: 2px solid #22c55e;
+    }
+    .feedback-toast {
+      animation: fadeOut 2s forwards;
+    }
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen p-4 flex items-center justify-center">
+
+<div class="max-w-2xl w-full bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <a href="home.html" class="bg-gray-200 hover:bg-gray-300 rounded-full p-2 w-10 h-10 flex items-center justify-center">←</a>
+    <div class="flex items-center gap-2 bg-amber-100 px-4 py-2 rounded-full font-bold">
+      <span>⭐</span> <span id="scoreValue">0</span>
+    </div>
+  </div>
+
+  <h1 class="text-3xl font-black text-center text-cyan-600 mb-1">🧩 Build a Word</h1>
+  <p class="text-center text-gray-500 mb-6">Arraste as sílabas para formar a palavra da imagem.</p>
+
+  <!-- Imagem / Emoji -->
+  <div class="flex justify-center mb-6">
+    <div class="text-8xl bg-white p-6 rounded-full shadow-md" id="wordImage">🐱</div>
+  </div>
+
+  <!-- Área de montagem -->
+  <div class="flex flex-wrap justify-center gap-3 mb-8" id="buildArea"></div>
+
+  <!-- Sílabas disponíveis -->
+  <div class="bg-white/60 rounded-2xl p-4 mb-6">
+    <h2 class="text-xl font-bold text-center mb-3">📦 Arraste as sílabas</h2>
+    <div id="syllablesContainer" class="flex flex-wrap justify-center gap-3"></div>
+  </div>
+
+  <!-- Botões -->
+  <div class="flex justify-center gap-4">
+    <button id="checkBtn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-bold shadow transition">✅ Verificar</button>
+    <button id="resetBtn" class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-full font-bold shadow transition">🔄 Reiniciar</button>
+  </div>
+
+  <div id="feedbackContainer" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 pointer-events-none z-50"></div>
+</div>
+
+<script src="eventos/build.js"></script>
+</body>
+</html>
