@@ -1,12 +1,12 @@
 # KantSpeak
 
-KantSpeak is a web-based educational platform designed to support English language learning through interactive, accessible, and modular activities. The system is oriented toward students and educators, providing a structured environment for practicing language skills such as phonetics, listening, writing, and vocabulary acquisition.
+KantSpeak is a web-based educational platform designed to support English language learning through interactive, accessible, and modular activities. 
 
 ---
 
 ## Overview
 
-KantSpeak was developed with a focus on simplicity, usability, and pedagogical flexibility. The platform allows users to select different learning modules according to their needs, promoting autonomy while reducing cognitive overload.
+KantSpeak was developed with a focus on simplicity, usability, and pedagogical flexibility. 
 
 The system is particularly suited for educational contexts, including classroom support and guided learning environments.
 
@@ -14,7 +14,7 @@ The system is particularly suited for educational contexts, including classroom 
 
 ## Features
 
-KantSpeak provides a set of interactive modules designed to address different aspects of language learning:
+KantSpeak provides a set of interactive modules:
 
 - **Alphabet** – Recognition of letters and phonetic awareness  
 - **Speak** – Oral practice through guided prompts  
@@ -35,10 +35,9 @@ KantSpeak provides a set of interactive modules designed to address different as
 
 The project is built using web technologies:
 
-- **Frontend:** HTML, CSS, JavaScript  
-- **Backend:** PHP *(or specify if using Node.js)*  
-- **Version Control:** Git  
-- **Platform:** Web browser  
+- **Frontend:** HTML, Tailwind/CSS, JavaScript  
+- **Backend:** PHP  
+- **Version Control:** Git   
 
 ---
 
@@ -47,7 +46,7 @@ The project is built using web technologies:
 ### Requirements
 
 - Web browser (Chrome, Firefox, Edge)
-- Local server (e.g., XAMPP, WAMP, or similar)
+- Local server: XAMPP
 
 ### Steps
 
