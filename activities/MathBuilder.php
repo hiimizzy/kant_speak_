@@ -3,7 +3,6 @@ require_once __DIR__ . '/../core/Atividade.php';
 
 class MathBuilder extends Atividade {
     public function __construct(array $itens, SessionManager $session) {
-        // $itens pode ser usado para armazenar contas pré-definidas, mas aqui deixaremos livre
         parent::__construct('Math Builder', $itens, 'math_index', $session);
     }
 
@@ -18,14 +17,14 @@ class MathBuilder extends Atividade {
             $certo = ($num1 + $num2 === $resposta);
         } elseif ($operador === '-') {
             $certo = ($num1 - $num2 === $resposta);
-        } // outros operadores podem ser adicionados
+        }
 
         if ($certo) {
             $this->addPoints(15);
-            $this->advance();       // passa para a próxima conta (se houver lista)
-            $this->session->setFeedback('Great math! +15 points');
+            // Não usamos $this->advance() porque a atividade é livre (a criança escolhe os números)
+            $this->session->setFeedback('🎉 Correct! +15 points');
         } else {
-            $this->session->setFeedback('Oops! Check your calculation.');
+            $this->session->setFeedback('❌ Oops! Try again.');
         }
     }
 }

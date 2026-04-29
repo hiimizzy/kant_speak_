@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sorting Game - Kant Speak</title>
+  <link rel="shortcut icon" href="img/autismo.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Nunito', sans-serif; user-select: none; }
+    .drag-card {
+      cursor: grab;
+      transition: transform 0.1s, box-shadow 0.1s;
+      background: white;
+      border-radius: 1rem;
+      padding: 0.75rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .drag-card:active { cursor: grabbing; }
+    .drag-card.dragging { opacity: 0.5; }
+    .category-zone {
+      background-color: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 1rem;
+      transition: all 0.2s;
+      min-height: 200px;
+    }
+    .category-zone.drag-over {
+      background-color: #fef9c3;
+      border-color: #eab308;
+    }
+    .card-placed {
+      opacity: 0.9;
+      cursor: default;
+    }
+    .feedback-toast {
+      animation: fadeOut 2s forwards;
+    }
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen p-4">
+
+<div class="max-w-6xl mx-auto">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4 bg-white/80 backdrop-blur p-3 rounded-2xl">
+    <a href="home.html" class="bg-gray-200 hover:bg-gray-300 rounded-full p-2 w-10 h-10 flex items-center justify-center">←</a>
+    <div class="flex items-center gap-3 bg-amber-50 px-4 py-2 rounded-full">
+      <span class="text-yellow-500 text-xl">⭐</span>
+      <span id="scoreValue" class="font-bold text-gray-800 text-xl">0</span>
+    </div>
+  </div>
+
+  <h1 class="text-3xl font-black text-center text-purple-600 mb-1">🧩 Sorting Game</h1>
+  <p class="text-center text-gray-500 mb-4">Arraste cada carta para a categoria correta. Ouça o nome e a categoria!</p>
+
+  <!-- Categorias (drop zones) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <!-- Animals -->
+    <div class="bg-white/60 rounded-2xl p-3 shadow">
+      <h2 class="text-xl font-bold text-center text-green-700 mb-2">🐾 Animals</h2>
+      <div id="category-animals" class="category-zone p-3" data-category="animals"></div>
+    </div>
+    <!-- Food -->
+    <div class="bg-white/60 rounded-2xl p-3 shadow">
+      <h2 class="text-xl font-bold text-center text-orange-700 mb-2">🍎 Food</h2>
+      <div id="category-food" class="category-zone p-3" data-category="food"></div>
+    </div>
+    <!-- Clothes -->
+    <div class="bg-white/60 rounded-2xl p-3 shadow">
+      <h2 class="text-xl font-bold text-center text-blue-700 mb-2">👕 Clothes</h2>
+      <div id="category-clothes" class="category-zone p-3" data-category="clothes"></div>
+    </div>
+    <!-- Transportation -->
+    <div class="bg-white/60 rounded-2xl p-3 shadow">
+      <h2 class="text-xl font-bold text-center text-red-700 mb-2">🚗 Transportation</h2>
+      <div id="category-transportation" class="category-zone p-3" data-category="transportation"></div>
+    </div>
+  </div>
+
+  <!-- Cartas arrastáveis -->
+  <div class="bg-white/70 rounded-2xl p-5 shadow-lg">
+    <h2 class="text-xl font-bold text-center mb-3">🃏 Arraste estas cartas</h2>
+    <div id="cardsContainer" class="card-container">
+      <!-- gerado por JS -->
+    </div>
+  </div>
+
+  <!-- Botão de reiniciar -->
+  <div class="flex justify-center mt-6">
+    <button id="resetBtn" class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-full font-bold text-lg shadow transition">🔄 Reiniciar jogo</button>
+  </div>
+
+  <div id="feedbackContainer" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 pointer-events-none z-50"></div>
+</div>
+
+<script src="eventos/sort.js"></script>
+</body>
+</html>

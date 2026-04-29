@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Time Trial - Kant Speak</title>
+  <link rel="shortcut icon" href="img/autismo.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Nunito', sans-serif; user-select: none; }
+    .option-card {
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    .option-card:active { transform: scale(0.96); }
+    .timer-ring {
+      transition: stroke-dashoffset 0.1s linear;
+    }
+    .feedback-toast {
+      animation: fadeOut 2s forwards;
+    }
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen p-4 flex items-center justify-center">
+
+<div class="max-w-2xl w-full bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-4">
+    <a href="home.html" class="bg-gray-200 hover:bg-gray-300 rounded-full p-2 w-10 h-10 flex items-center justify-center">←</a>
+    <div class="flex items-center gap-3">
+      <div class="bg-amber-100 px-4 py-2 rounded-full font-bold flex items-center gap-2">
+        <span>⭐</span> <span id="scoreValue">0</span>
+      </div>
+      <button id="toggleTimerMode" class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-bold">⏸️ Modo tranquilo</button>
+    </div>
+  </div>
+
+  <h1 class="text-3xl font-black text-center text-purple-600 mb-1">⏱️ Time Trial</h1>
+  <p class="text-center text-gray-500 mb-4">Match the word to the correct image before time runs out!</p>
+
+  <!-- Palavra atual -->
+  <div class="text-center mb-4">
+    <div class="text-5xl font-black text-indigo-700 bg-white inline-block px-8 py-3 rounded-full shadow-md" id="currentWord">CAT</div>
+  </div>
+
+  <!-- Timer (circular ou retangular) -->
+  <div class="flex justify-center mb-6">
+    <div class="relative w-32 h-32">
+      <svg class="w-full h-full transform -rotate-90">
+        <circle cx="64" cy="64" r="58" stroke="#e2e8f0" stroke-width="8" fill="none" />
+        <circle id="timerCircle" cx="64" cy="64" r="58" stroke="#4f46e5" stroke-width="8" fill="none" stroke-dasharray="364.4" stroke-dashoffset="0" />
+      </svg>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <span id="timerText" class="text-3xl font-bold text-gray-800">5</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opções (3 imagens/emoji) -->
+  <div id="optionsContainer" class="grid grid-cols-3 gap-4 mb-6">
+    <!-- preenchido por JS -->
+  </div>
+
+  <!-- Botão reiniciar/pular -->
+  <div class="flex justify-center gap-4">
+    <button id="skipBtn" class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-full font-bold">⏩ Pular</button>
+  </div>
+
+  <div id="feedbackContainer" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 pointer-events-none z-50"></div>
+</div>
+
+<script src="eventos/time_trial.js"></script>
+</body>
+</html>

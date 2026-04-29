@@ -1,57 +1,161 @@
 let currentScore = 0;
-let currentOperation = { num1: null, operator: null, num2: null, answer: null };
-const dropZones = ['num1', 'operator', 'num2', 'answer'];
+let currentOperation = { num1: null, operator: null, num2: null };
 
-// Elementos
+// Elementos DOM
 const scoreSpan = document.getElementById('scoreValue');
+const starsContainer = document.getElementById('starsContainer');
 const dropNum1 = document.getElementById('dropNum1');
 const dropOperator = document.getElementById('dropOperator');
 const dropNum2 = document.getElementById('dropNum2');
-const dropAnswer = document.getElementById('dropAnswer');
+const answerInput = document.getElementById('answerInput');
 const checkBtn = document.getElementById('checkBtn');
+const speakEqBtn = document.getElementById('speakEqBtn');
 const clearBtn = document.getElementById('clearBtn');
 const paletteDiv = document.getElementById('palette');
 const feedbackContainer = document.getElementById('feedbackContainer');
 
-// Dados das peças (números e operadores)
-const numbers = [0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,100,200,300,400,500];
+if (!answerInput) console.error('Elemento "answerInput" não encontrado!');
+
+// Números disponíveis na paleta
+const numbers = [
+  0,1,2,3,4,5,6,7,8,9,
+  10,11,12,13,14,15,16,17,18,19,20,
+  30,40,50,60,70,80,90,
+  100,200,300,400,500,600,700,800,900,
+  240, 399, 639
+];
 const operators = ['+', '-'];
+
+// ========== Conversão número para palavra (0-999) ==========
+function numberToWords(num) {
+  if (num === 0) return "zero";
+  const ones = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+  const teens = ["ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+  const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+
+  let words = "";
+  if (num >= 100) {
+    words += ones[Math.floor(num / 100)] + " hundred ";
+    num %= 100;
+    if (num > 0) words += "and ";
+  }
+  if (num >= 20) {
+    words += tens[Math.floor(num / 10)];
+    if (num % 10 > 0) words += " " + ones[num % 10];
+  } else if (num >= 10) {
+    words += teens[num - 10];
+  } else if (num > 0) {
+    words += ones[num];
+  }
+  return words.trim();
+}
+
+// Pronunciar uma equação (recebendo os parâmetros)
+function speakEquation(num1, operator, num2, result) {
+  if (!('speechSynthesis' in window)) return;
+  const wordsNum1 = numberToWords(num1);
+  const wordsNum2 = numberToWords(num2);
+  const wordsResult = numberToWords(result);
+  const opWord = operator === '+' ? 'plus' : 'minus';
+  const sentence = `${wordsNum1} ${opWord} ${wordsNum2} equals ${wordsResult}`;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(sentence);
+  utterance.lang = 'en-US';
+  utterance.rate = 0.85;
+  window.speechSynthesis.speak(utterance);
+}
+
+// Função para falar a equação atual (sem verificar resposta)
+function speakCurrentEquation() {
+  if (currentOperation.num1 === null || currentOperation.operator === null || currentOperation.num2 === null) {
+    showFeedback('Please drag numbers and an operator first!', false);
+    return;
+  }
+  let correctResult;
+  if (currentOperation.operator === '+') {
+    correctResult = currentOperation.num1 + currentOperation.num2;
+  } else {
+    correctResult = currentOperation.num1 - currentOperation.num2;
+  }
+  speakEquation(currentOperation.num1, currentOperation.operator, currentOperation.num2, correctResult);
+}
 
 // ========== API ==========
 async function fetchScore() {
-  const resp = await fetch('api.php?action=getScore');
-  const data = await resp.json();
-  currentScore = data.score || 0;
-  scoreSpan.innerText = currentScore;
+  try {
+    const resp = await fetch('api.php?action=getScore');
+    const data = await resp.json();
+    currentScore = data.score || 0;
+    scoreSpan.innerText = currentScore;
+    updateStars(currentScore);
+  } catch (err) {
+    console.error('fetchScore:', err);
+  }
+}
+
+function updateStars(score) {
+  const stars = Math.min(5, Math.floor(score / 30));
+  const starSpans = starsContainer.querySelectorAll('.star');
+  starSpans.forEach((star, idx) => {
+    if (idx < stars) star.classList.add('lit');
+    else star.classList.remove('lit');
+  });
 }
 
 async function sendCheck() {
-  if (currentOperation.num1 === null || currentOperation.operator === null || 
-      currentOperation.num2 === null || currentOperation.answer === null) {
-    showFeedback('Complete all fields first!', false);
+  const answerInputEl = document.getElementById('answerInput');
+  if (!answerInputEl) {
+    showFeedback('Error: answer field not found!', false);
     return;
   }
+  const answerValue = answerInputEl.value.trim();
+  if (currentOperation.num1 === null || currentOperation.operator === null ||
+      currentOperation.num2 === null || answerValue === '') {
+    showFeedback('Complete all fields and type the answer!', false);
+    return;
+  }
+  const answerNum = parseInt(answerValue, 10);
+  if (isNaN(answerNum)) {
+    showFeedback('Please enter a valid number!', false);
+    return;
+  }
+  let correctResult;
+  if (currentOperation.operator === '+') {
+    correctResult = currentOperation.num1 + currentOperation.num2;
+  } else {
+    correctResult = currentOperation.num1 - currentOperation.num2;
+  }
+
   const formData = new FormData();
   formData.append('action', 'check');
   formData.append('activity', 'mathbuilder');
   formData.append('num1', currentOperation.num1);
   formData.append('operator', currentOperation.operator);
   formData.append('num2', currentOperation.num2);
-  formData.append('answer', currentOperation.answer);
-  const resp = await fetch('api.php', { method: 'POST', body: formData });
-  const data = await resp.json();
-  if (data.success) {
-    showFeedback(data.feedback, data.feedback.includes('Great'));
-    if (data.score !== undefined) {
-      currentScore = data.score;
-      scoreSpan.innerText = currentScore;
+  formData.append('answer', answerNum);
+
+  try {
+    const resp = await fetch('api.php', { method: 'POST', body: formData });
+    const data = await resp.json();
+    if (data.success) {
+      const isCorrect = data.feedback.includes('Correct');
+      showFeedback(data.feedback, isCorrect);
+      if (data.score !== undefined) {
+        currentScore = data.score;
+        scoreSpan.innerText = currentScore;
+        updateStars(currentScore);
+      }
+      // Sempre fala a equação correta (didático)
+      speakEquation(currentOperation.num1, currentOperation.operator, currentOperation.num2, correctResult);
+      if (isCorrect) {
+        clearAllZones();
+      }
+    } else {
+      showFeedback('Error!', false);
     }
-    if (data.feedback.includes('Great')) {
-      // opcional: limpar ou avançar para novo desafio (aqui limparemos)
-      clearAllZones();
-    }
-  } else {
-    showFeedback('Error!', false);
+  } catch (err) {
+    console.error(err);
+    showFeedback('Connection error!', false);
   }
 }
 
@@ -65,12 +169,12 @@ function handleDragStart(e) {
   e.dataTransfer.effectAllowed = 'copy';
 }
 
-function handleDragEnd(e) {
+function handleDragEnd() {
   draggedItem = null;
 }
 
-// Configurar drop zones
 function setupDropZone(zoneElement, zoneName) {
+  if (!zoneElement) return;
   zoneElement.addEventListener('dragover', (e) => {
     e.preventDefault();
     zoneElement.classList.add('drag-over');
@@ -88,25 +192,24 @@ function setupDropZone(zoneElement, zoneName) {
 }
 
 function updateZone(zoneName, value) {
-  // Atualiza o estado
-  currentOperation[zoneName] = value;
-  // Atualiza a UI
+  if (zoneName === 'answer') return;
+  currentOperation[zoneName] = isNaN(value) ? value : Number(value);
   const zoneEl = document.getElementById(`drop${zoneName.charAt(0).toUpperCase() + zoneName.slice(1)}`);
-  zoneEl.innerText = value;
+  if (zoneEl) zoneEl.innerText = value;
 }
 
 function clearAllZones() {
-  currentOperation = { num1: null, operator: null, num2: null, answer: null };
+  currentOperation = { num1: null, operator: null, num2: null };
   dropNum1.innerText = '?';
   dropOperator.innerText = '?';
   dropNum2.innerText = '?';
-  dropAnswer.innerText = '?';
+  const answerInputEl = document.getElementById('answerInput');
+  if (answerInputEl) answerInputEl.value = '';
 }
 
-// ========== Paleta (itens arrastáveis) ==========
+// ========== Paleta ==========
 function buildPalette() {
   paletteDiv.innerHTML = '';
-  // Números
   numbers.forEach(n => {
     const card = document.createElement('div');
     card.className = 'drag-item number-card';
@@ -115,13 +218,11 @@ function buildPalette() {
     card.innerText = n;
     card.addEventListener('dragstart', handleDragStart);
     card.addEventListener('dragend', handleDragEnd);
-    // Suporte a touch (simplificado: toque longo ou arrasto)
     card.addEventListener('touchstart', handleTouchStart);
     card.addEventListener('touchmove', handleTouchMove);
     card.addEventListener('touchend', handleTouchEnd);
     paletteDiv.appendChild(card);
   });
-  // Operadores
   operators.forEach(op => {
     const card = document.createElement('div');
     card.className = 'drag-item number-card';
@@ -137,7 +238,7 @@ function buildPalette() {
   });
 }
 
-// Suporte a toque (simplificado – clones)
+// ========== Suporte toque ==========
 let touchDragItem = null;
 let touchTargetZone = null;
 
@@ -153,10 +254,9 @@ function handleTouchMove(e) {
   e.preventDefault();
   const touch = e.touches[0];
   const elemUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY)[0];
-  // verifica se está sobre alguma drop zone
-  const zones = [dropNum1, dropOperator, dropNum2, dropAnswer];
-  touchTargetZone = zones.find(zone => zone.contains(elemUnderTouch)) || null;
-  zones.forEach(zone => zone.classList.remove('drag-over'));
+  const zones = [dropNum1, dropOperator, dropNum2];
+  touchTargetZone = zones.find(zone => zone && zone.contains(elemUnderTouch)) || null;
+  zones.forEach(zone => zone && zone.classList.remove('drag-over'));
   if (touchTargetZone) touchTargetZone.classList.add('drag-over');
 }
 
@@ -174,6 +274,7 @@ function handleTouchEnd(e) {
   touchTargetZone = null;
 }
 
+// ========== Feedback visual ==========
 function showFeedback(message, isCorrect) {
   feedbackContainer.innerHTML = '';
   const toast = document.createElement('div');
@@ -183,15 +284,15 @@ function showFeedback(message, isCorrect) {
   setTimeout(() => toast.remove(), 2500);
 }
 
-// Inicialização
+// ========== Inicialização ==========
 function init() {
   fetchScore();
   buildPalette();
   setupDropZone(dropNum1, 'num1');
   setupDropZone(dropOperator, 'operator');
   setupDropZone(dropNum2, 'num2');
-  setupDropZone(dropAnswer, 'answer');
-  checkBtn.addEventListener('click', sendCheck);
-  clearBtn.addEventListener('click', clearAllZones);
+  if (checkBtn) checkBtn.addEventListener('click', sendCheck);
+  if (speakEqBtn) speakEqBtn.addEventListener('click', speakCurrentEquation);
+  if (clearBtn) clearBtn.addEventListener('click', clearAllZones);
 }
 init();
