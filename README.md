@@ -51,6 +51,14 @@ The project is built using web technologies:
 ### Steps
 
 1. Clone the repository:
-
-```bash
 git clone https://github.com/seu-usuario/kantspeak.git
+
+2. Navigate to the project folder:
+cd kant_speak_
+
+3. Move the project to your local server directory:
+htdocs in XAMPP
+
+5. Start your local server
+Open in browser:
+http://localhost/kantspeak
