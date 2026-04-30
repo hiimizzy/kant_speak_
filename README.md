@@ -33,13 +33,24 @@ KantSpeak provides a set of interactive modules:
 
 ## Technologies
 
-The project is built using web technologies:
+KantSpeak is built using:
 
-- **Frontend:** HTML, Tailwind/CSS, JavaScript  
-- **Backend:** PHP  
-- **Version Control:** Git   
+- HTML, CSS, JavaScript    
+- PHP (backend)  
+- Web-based Air Canvas integration for gesture interaction    
 
 ---
+
+## Gesture-Based Interaction
+
+KantSpeak integrates an Air Canvas feature through web technologies, enabling gesture-based interaction directly in the browser.
+
+This functionality allows users to:
+
+- Interact using hand movements  
+- Engage with visual activities without physical contact  
+
+The Air Canvas component is embedded into the system interface and does not require additional local installation or configuration.
 
 ## Installation
 
