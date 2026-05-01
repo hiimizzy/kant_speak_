@@ -1,31 +1,30 @@
-\---
-![TEST](images/interface.png)
-title: ‘KantSpeak: Interactive English Language Learning for Children on the Autism Spectrum (Levels 1 and 2\)’
+---
+title: "KantSpeak: Interactive English Language Learning for Children on the Autism Spectrum (Levels 1 and 2)"
 
-tags:  
-  **\-** autism  
-  **\-** education  
-  \- computer vision    
-  **\-** language learning
+tags:
+  - autism
+  - education
+  - computer vision
+  - language learning
 
-authors:  
-\- name: Isabela Araujo Costa  
-affiliation: 1  
-orcid: 0009-0002-9981-6343  
-\- name: Samya Rodrigues da Costa  
-affiliation: 1  
-\- name: Carlos Henrique Guedes de Sousa  
-affiliation: 1  
-\- name: Pedro Henrique Alves Ribeiro  
-affiliation: 1
+authors:
+  - name: Isabela Araujo Costa
+    affiliation: 1
+    orcid: 0000-0002-9981-6343
+  - name: Samya Rodrigues da Costa
+    affiliation: 1
+  - name: Carlos Henrique Guedes de Sousa
+    affiliation: 1
+  - name: Pedro Henrique Alves Ribeiro
+    affiliation: 1
 
-affiliations:  
-\- name: State University of Pará, Redenção, Brazil  
-index: 1
+affiliations:
+  - name: Nome da sua instituição
+    index: 1
 
-date: 2026-04-27  
-bibliography: paper.bib  
-\--- 
+date: 2026
+bibliography: paper.bib
+---
 
 **\#  Summary**  
 KantSpeak is an open-source web-based platform designed to support English language learning for children on the autism spectrum (ASD), particularly those classified within support levels 1 and 2\. The system provides interactive and multimodal activities that combine visual, auditory, and textual elements to facilitate engagement and comprehension.
@@ -62,7 +61,7 @@ The system integrates computer vision components to enable interaction based on 
 
 **\# Figures** 
 
-**\!\[Main interface of KantSpeak showing available modules.\](images/interface.png)**
+![Main interface of KantSpeak showing available modules.](images/interface.png)
 
 **\# AI usage disclosure**
 
