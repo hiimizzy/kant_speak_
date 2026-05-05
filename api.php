@@ -91,9 +91,8 @@ $activities = [
     'listen'     => new Listen($palavras, $session),
     'speak'      => new Speak($palavras, $session),
     'write'      => new Write($palavras, $session),
-    'draw'       => new Draw($palavras, $session),
-    'ispy'       => new ISpy($spyItems, $session),
-    'buildword'  => new BuildWord($buildWords, $session)
+    'timetrial' => new TimeTrial($vocabulary, $session)
+
 ];
 
 header('Content-Type: application/json');

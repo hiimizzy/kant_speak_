@@ -1,212 +1,270 @@
- // Banco de palavras e imagens (emoji)
-  const vocabulary = [
-    { word: "CAT", emoji: "🐱" },
-    { word: "DOG", emoji: "🐕" },
-    { word: "SUN", emoji: "☀️" },
-    { word: "APPLE", emoji: "🍎" },
-    { word: "CAR", emoji: "🚗" },
-    { word: "BIRD", emoji: "🐦" },
-    { word: "FISH", emoji: "🐠" },
-    { word: "STAR", emoji: "⭐" },
-    { word: "HOUSE", emoji: "🏠" },
-    { word: "BOOK", emoji: "📚" },
-    { word: "FLOWER", emoji: "🌺" },
-    { word: "TREE", emoji: "🌳" },
-    { word: "MOON", emoji: "🌙" },
-    { word: "CLOUD", emoji: "☁️" }, 
-    { word: "RAIN", emoji: "🌧️" },
-    { word: "SNOW", emoji: "❄️" },
-    { word: "MOUSE", emoji: "🐭" },
-    { word: "HORSE", emoji: "🐴" },
-    { word: "COW", emoji: "🐮" },
-    { word: "FARM", emoji: "🚜" }
-  ];
+// ========== INSTRUMENTATION ==========
+const SESSION_ID = localStorage.getItem('kant_session') || Date.now().toString();
+localStorage.setItem('kant_session', SESSION_ID);
 
-  let currentScore = 0;
-  let currentWordObj = null;
-  let currentOptions = [];
-  let timer = 5;           // segundos
-  let timerInterval = null;
-  let isTimedMode = true;  // true = cronometrado, false = modo tranquilo
-  let gameActive = true;
+function logEvent(eventType, payload) {
+    fetch('../instrument.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            session: SESSION_ID,
+            activity: 'timetrial',
+            event: eventType,
+            timestamp: Date.now() / 1000,
+            data: payload
+        })
+    }).catch(e => console.warn('Logging failed:', e));
+}
 
-  // Elementos DOM
-  const scoreSpan = document.getElementById('scoreValue');
-  const currentWordSpan = document.getElementById('currentWord');
-  const optionsDiv = document.getElementById('optionsContainer');
-  const skipBtn = document.getElementById('skipBtn');
-  const toggleModeBtn = document.getElementById('toggleTimerMode');
-  const feedbackContainer = document.getElementById('feedbackContainer');
-  const timerTextSpan = document.getElementById('timerText');
-  const timerCircle = document.getElementById('timerCircle');
+// ========== GAME STATE ==========
+let currentWordObj = null;
+let currentScore = 0;
+let currentOptions = [];
+let timer = 5;
+let timerInterval = null;
+let isTimedMode = true;
+let gameActive = true;
+let startTime = null;
+let currentTrialStart = null;
 
-  // Circunferência do círculo (2 * pi * raio ≈ 2 * 3.1416 * 58 ≈ 364.4)
-  const CIRCUMFERENCE = 2 * Math.PI * 58;
+// Elementos DOM
+const scoreSpan = document.getElementById('scoreValue');
+const currentWordSpan = document.getElementById('currentWord');
+const optionsDiv = document.getElementById('optionsContainer');
+const skipBtn = document.getElementById('skipBtn');
+const toggleModeBtn = document.getElementById('toggleTimerMode');
+const feedbackContainer = document.getElementById('feedbackContainer');
+const timerTextSpan = document.getElementById('timerText');
+const timerCircle = document.getElementById('timerCircle');
+const starsContainer = document.getElementById('starsContainer');
 
-  function loadScore() {
-    const saved = localStorage.getItem('timeTrialScore');
-    currentScore = saved ? parseInt(saved) : 0;
-    scoreSpan.textContent = currentScore;
-  }
+// Circunferência do círculo (2 * pi * 58 ≈ 364.4)
+const CIRCUMFERENCE = 2 * Math.PI * 58;
 
-  function saveScore() {
-    localStorage.setItem('timeTrialScore', currentScore);
-    scoreSpan.textContent = currentScore;
-  }
+// Banco de palavras para gerar distratores (vocabulário do sistema)
+const vocabulary = [
+    { word: "CAT", emoji: "🐱" }, { word: "DOG", emoji: "🐕" }, { word: "SUN", emoji: "☀️" },
+    { word: "APPLE", emoji: "🍎" }, { word: "CAR", emoji: "🚗" }, { word: "BIRD", emoji: "🐦" },
+    { word: "FISH", emoji: "🐠" }, { word: "STAR", emoji: "⭐" }, { word: "HOUSE", emoji: "🏠" },
+    { word: "BOOK", emoji: "📚" }, { word: "MOON", emoji: "🌙" }, { word: "FLOWER", emoji: "🌸" }
+];
 
-  function addPoints(points) {
-    currentScore += points;
-    saveScore();
-    showFeedback(`+${points} points!`, true);
-  }
+// ========== API Calls ==========
+async function fetchScore() {
+    try {
+        const resp = await fetch('../api.php?action=getScore');
+        const data = await resp.json();
+        currentScore = data.score || 0;
+        scoreSpan.textContent = currentScore;
+        updateStars();
+    } catch (err) { console.error('fetchScore:', err); }
+}
 
-  function showFeedback(msg, isGood) {
-    feedbackContainer.innerHTML = '';
-    const toast = document.createElement('div');
-    toast.className = `feedback-toast px-6 py-3 rounded-full shadow-xl font-bold text-white text-center ${isGood ? 'bg-green-500' : 'bg-red-500'}`;
-    toast.textContent = msg;
-    feedbackContainer.appendChild(toast);
-    setTimeout(() => toast.remove(), 2000);
-  }
-
-  // Atualizar timer visual (círculo e texto)
-  function updateTimerUI() {
-    timerTextSpan.textContent = Math.ceil(timer);
-    const offset = CIRCUMFERENCE - (timer / 5) * CIRCUMFERENCE; // máximo 5 segundos
-    timerCircle.style.strokeDashoffset = offset;
-  }
-
-  // Parar o timer
-  function stopTimer() {
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
+async function fetchCurrentWord() {
+    try {
+        const resp = await fetch('../api.php?action=getItem&activity=timetrial');
+        const data = await resp.json();
+        if (data.success) {
+            currentWordObj = data.item;
+            currentWordSpan.textContent = currentWordObj.word;
+            generateOptions();
+            renderOptions();
+            if (isTimedMode) startTimer();
+            logEvent('session_start', { word: currentWordObj.word });
+        } else {
+            // Fallback: usar palavra aleatória do banco local (para testes sem backend)
+            const randomIndex = Math.floor(Math.random() * vocabulary.length);
+            currentWordObj = vocabulary[randomIndex];
+            currentWordSpan.textContent = currentWordObj.word;
+            generateOptions();
+            renderOptions();
+            if (isTimedMode) startTimer();
+        }
+    } catch (err) {
+        console.error('fetchCurrentWord:', err);
+        // Fallback local
+        const randomIndex = Math.floor(Math.random() * vocabulary.length);
+        currentWordObj = vocabulary[randomIndex];
+        currentWordSpan.textContent = currentWordObj.word;
+        generateOptions();
+        renderOptions();
+        if (isTimedMode) startTimer();
     }
-  }
+}
 
-  // Iniciar timer 
-  function startTimer() {
+async function sendAnswer(selectedWord) {
+    const reactionTime = (performance.now() - currentTrialStart) / 1000;
+    const formData = new FormData();
+    formData.append('action', 'check');
+    formData.append('activity', 'timetrial');
+    formData.append('resposta', selectedWord);
+    try {
+        const resp = await fetch('../api.php', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.success) {
+            const isCorrect = data.feedback.includes('Correct');
+            showFeedback(data.feedback, isCorrect);
+            logEvent('check', {
+                selected: selectedWord,
+                correct: isCorrect,
+                reactionTime: reactionTime,
+                pointsEarned: isCorrect ? 10 : 0
+            });
+            if (data.score !== undefined) {
+                currentScore = data.score;
+                scoreSpan.textContent = currentScore;
+                updateStars();
+            }
+            if (isCorrect) {
+                if (isTimedMode) {
+                    timer = Math.min(timer + 2, 5);
+                    updateTimerUI();
+                }
+                nextWord();
+            } else {
+                if (isTimedMode) {
+                    timer -= 1;
+                    updateTimerUI();
+                    if (timer <= 0) {
+                        stopTimer();
+                        showFeedback("⏰ Time's up!", false);
+                        nextWord();
+                    }
+                }
+            }
+        } else {
+            showFeedback('Error verifying', false);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// ========== Timer Functions ==========
+function updateTimerUI() {
+    timerTextSpan.textContent = Math.ceil(timer);
+    const offset = CIRCUMFERENCE - (timer / 5) * CIRCUMFERENCE;
+    timerCircle.style.strokeDashoffset = offset;
+}
+
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+function startTimer() {
     if (!isTimedMode) return;
     if (timerInterval) stopTimer();
     timer = 5;
     updateTimerUI();
     timerInterval = setInterval(() => {
-      if (!gameActive) return;
-      if (timer <= 0) {
-        // Tempo esgotou
-        stopTimer();
-        showFeedback("⏰ Time's up! Try the next word.", false);
-        nextWord();
-      } else {
-        timer = Math.max(0, timer - 0.1);
-        updateTimerUI();
-      }
+        if (!gameActive) return;
+        if (timer <= 0) {
+            stopTimer();
+            showFeedback("⏰ Time's up!", false);
+            nextWord();
+        } else {
+            timer = Math.max(0, timer - 0.1);
+            updateTimerUI();
+        }
     }, 100);
-  }
+}
 
-  // Gerar novas opções 
-  function generateOptions(correctWord) {
-    const others = vocabulary.filter(item => item.word !== correctWord.word);
+// ========== Game Logic ==========
+function generateOptions() {
+    // Pega duas palavras aleatórias diferentes da palavra atual
+    const others = vocabulary.filter(item => item.word !== currentWordObj.word);
     const shuffled = [...others];
     for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    const opts = [correctWord, shuffled[0], shuffled[1]];
+    const opts = [currentWordObj, shuffled[0], shuffled[1]];
     // Embaralhar ordem
     for (let i = opts.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [opts[i], opts[j]] = [opts[j], opts[i]];
+        const j = Math.floor(Math.random() * (i + 1));
+        [opts[i], opts[j]] = [opts[j], opts[i]];
     }
-    return opts;
-  }
+    currentOptions = opts;
+}
 
-  // Carregar nova rodada
-  function nextWord() {
-    if (!gameActive) return;
-    // Escolher palavra aleatória
-    const randomIndex = Math.floor(Math.random() * vocabulary.length);
-    currentWordObj = vocabulary[randomIndex];
-    currentWordSpan.textContent = currentWordObj.word;
-    currentOptions = generateOptions(currentWordObj);
-    renderOptions();
-    // Reiniciar timer
-    if (isTimedMode) {
-      startTimer();
-    }
-  }
-
-  function renderOptions() {
+function renderOptions() {
     optionsDiv.innerHTML = '';
     currentOptions.forEach(opt => {
-      const btn = document.createElement('div');
-      btn.className = 'option-card bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 text-center shadow-md hover:shadow-lg transition';
-      btn.innerHTML = `<div class="text-7xl">${opt.emoji}</div><div class="font-bold text-gray-600 mt-2">${opt.word}</div>`;
-      btn.addEventListener('click', () => handleAnswer(opt.word));
-      optionsDiv.appendChild(btn);
+        const btn = document.createElement('div');
+        btn.className = 'option-card flex flex-col items-center justify-center p-4 cursor-pointer hover:shadow-lg transition';
+        btn.innerHTML = `<div class="text-6xl">${opt.emoji}</div><div class="font-bold mt-2 text-gray-700">${opt.word}</div>`;
+        btn.addEventListener('click', () => {
+            if (!gameActive) return;
+            currentTrialStart = performance.now();
+            sendAnswer(opt.word);
+        });
+        optionsDiv.appendChild(btn);
     });
-  }
+}
 
-  function handleAnswer(selectedWord) {
+async function nextWord() {
     if (!gameActive) return;
-    if (selectedWord === currentWordObj.word) {
-      // Acerto
-      addPoints(10);
-      showFeedback("✅ Correct! +10 points", true);
-      if (isTimedMode) {
-        // Ganha +2 segundos
-        timer = Math.min(timer + 2, 5);
-        updateTimerUI();
-      }
-      nextWord();
-    } else {
-      // Erro
-      if (isTimedMode) {
-        timer -= 1;
-        updateTimerUI();
-        if (timer <= 0) {
-          stopTimer();
-          showFeedback("⏰ Time's up!", false);
-          nextWord();
-        } else {
-          showFeedback(`❌ Wrong! The correct was ${currentWordObj.word}`, false);
-        }
-      } else {
-        showFeedback(`❌ Wrong! Try again. The word is ${currentWordObj.word}`, false);
-      }
-    }
-  }
+    stopTimer();
+    await fetchCurrentWord();
+    currentTrialStart = performance.now();
+    if (isTimedMode) startTimer();
+}
 
-  function skipWord() {
+function skipWord() {
     if (!gameActive) return;
     showFeedback("Skipped!", false);
     nextWord();
-  }
+}
 
-  function toggleTimerMode() {
+function toggleTimerMode() {
     isTimedMode = !isTimedMode;
     if (isTimedMode) {
-      toggleModeBtn.innerHTML = "⏸️ Modo tranquilo";
-      toggleModeBtn.classList.remove("bg-gray-500", "hover:bg-gray-600");
-      toggleModeBtn.classList.add("bg-indigo-500", "hover:bg-indigo-600");
-      startTimer();
+        toggleModeBtn.innerHTML = "☁️ Modo tranquilo";
+        toggleModeBtn.classList.remove("bg-gray-500", "hover:bg-gray-600");
+        toggleModeBtn.classList.add("bg-indigo-500", "hover:bg-indigo-600");
+        startTimer();
+        logEvent('mode_change', { mode: 'timed' });
     } else {
-      toggleModeBtn.innerHTML = "⚡ Modo cronometrado";
-      toggleModeBtn.classList.remove("bg-indigo-500", "hover:bg-indigo-600");
-      toggleModeBtn.classList.add("bg-gray-500", "hover:bg-gray-600");
-      stopTimer();
-      timerTextSpan.textContent = "∞";
-      timerCircle.style.strokeDashoffset = "0";
+        toggleModeBtn.innerHTML = "⚡ Modo cronometrado";
+        toggleModeBtn.classList.remove("bg-indigo-500", "hover:bg-indigo-600");
+        toggleModeBtn.classList.add("bg-gray-500", "hover:bg-gray-600");
+        stopTimer();
+        timerTextSpan.textContent = "∞";
+        timerCircle.style.strokeDashoffset = "0";
+        logEvent('mode_change', { mode: 'relax' });
     }
-    showFeedback(isTimedMode ? "Timer mode activated!" : "Relax mode activated. No timer.", true);
-  }
+    showFeedback(isTimedMode ? "Timer mode activated!" : "Relax mode. No timer.", true);
+}
 
-  function initGame() {
-    loadScore();
-    gameActive = true;
-    nextWord();
+function updateStars() {
+    const stars = Math.min(5, Math.floor(currentScore / 30));
+    const starSpans = starsContainer.querySelectorAll('.star');
+    starSpans.forEach((star, idx) => {
+        if (idx < stars) star.classList.add('lit');
+        else star.classList.remove('lit');
+    });
+}
+
+function showFeedback(message, isCorrect) {
+    feedbackContainer.innerHTML = '';
+    const toast = document.createElement('div');
+    toast.className = `feedback-toast px-6 py-3 rounded-full shadow-xl font-bold text-white text-center ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`;
+    toast.textContent = message;
+    feedbackContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+}
+
+// ========== Inicialização ==========
+async function init() {
+    await fetchScore();
+    await fetchCurrentWord();
+    currentTrialStart = performance.now();
     skipBtn.addEventListener('click', skipWord);
     toggleModeBtn.addEventListener('click', toggleTimerMode);
-  }
+    logEvent('instrumentation_ready', { version: '1.0' });
+}
 
-  initGame();
+init();
