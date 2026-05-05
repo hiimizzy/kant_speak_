@@ -77,4 +77,5 @@ All activities send interaction events to the logger and can be easily extended 
    git clone https://github.com/yourlab/kant_speak_
    cd kant_speak_
 2. Start a PHP server
+   ```bash
    php -S localhost:8000
