@@ -45,6 +45,12 @@ drawCtx.lineJoin = 'round';
 async function fetchCurrentItem() {
   try {
     const resp = await fetch('api.php?action=getItem&activity=alphabet');
+    if (!resp.ok) {
+      const text = await resp.text();
+      console.error('HTTP', resp.status, text.substring(0, 200));
+      showFeedback('❌ Server error: ' + resp.status);
+      return;
+    }
     const data = await resp.json();
     if (data.success) {
       currentLetter = data.item;
@@ -52,6 +58,7 @@ async function fetchCurrentItem() {
       drawGuideLetter();
     } else {
       console.error('Erro ao buscar letra:', data);
+      showFeedback('❌ ' + (data.error || 'Unknown'));
     }
   } catch (err) {
     console.error('fetchCurrentItem:', err);
@@ -62,6 +69,11 @@ async function fetchCurrentItem() {
 async function fetchScore() {
   try {
     const resp = await fetch('api.php?action=getScore');
+    if (!resp.ok) {
+      const text = await resp.text();
+      console.error('HTTP', resp.status, text.substring(0, 200));
+      return;
+    }
     const data = await resp.json();
     if (data.score !== undefined) {
       currentScore = data.score;

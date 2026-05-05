@@ -89,7 +89,6 @@ $activities = [
     'speak'      => new Speak($palavras, $session),
     'write'      => new Write($palavras, $session),
     'timetrial' => new TimeTrial($vocabulary, $session)
-
 ];
 
 $vocabulary = [
@@ -105,8 +104,10 @@ header('Content-Type: application/json');
 $action   = $_POST['action'] ?? $_GET['action'] ?? '';
 $activity = $_POST['activity'] ?? $_GET['activity'] ?? '';
 
+error_log("API called: action=$action, activity=$activity");
 if (!$action || !isset($activities[$activity])) {
-    echo json_encode(['error' => 'Ação ou atividade inválida']);
+    http_response_code(400);
+    echo json_encode(['error' => 'Ação ou atividade inválida: ' . $activity]);
     exit;
 }
 
