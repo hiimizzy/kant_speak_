@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Time Trial - Kant Speak</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { font-family: 'Nunito', sans-serif; user-select: none; }
@@ -18,9 +17,6 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     .option-card:active { transform: scale(0.96); }
-    .timer-ring {
-      transition: stroke-dashoffset 0.1s linear;
-    }
     .feedback-toast {
       animation: fadeOut 2s forwards;
     }
@@ -35,7 +31,6 @@
 <body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen p-4 flex items-center justify-center">
 
 <div class="max-w-2xl w-full bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6">
-  <!-- Header -->
   <div class="flex justify-between items-center mb-4">
     <a href="home.html" class="bg-gray-200 hover:bg-gray-300 rounded-full p-2 w-10 h-10 flex items-center justify-center">←</a>
     <div class="flex items-center gap-3">
@@ -49,12 +44,10 @@
   <h1 class="text-3xl font-black text-center text-purple-600 mb-1">⏱️ Time Trial</h1>
   <p class="text-center text-gray-500 mb-4">Acerte a palavra antes que o tempo acabe!</p>
 
-  <!-- Palavra atual -->
   <div class="text-center mb-4">
     <div class="text-5xl font-black text-indigo-700 bg-white inline-block px-8 py-3 rounded-full shadow-md" id="currentWord">CAT</div>
   </div>
 
-  <!-- Timer circular -->
   <div class="flex justify-center mb-6">
     <div class="relative w-32 h-32">
       <svg class="w-full h-full transform -rotate-90">
@@ -67,15 +60,12 @@
     </div>
   </div>
 
-  <!-- Opções (imagens/emoji) -->
   <div id="optionsContainer" class="grid grid-cols-3 gap-4 mb-6"></div>
 
-  <!-- Estrelas de progresso -->
   <div class="flex justify-center gap-1 mb-4" id="starsContainer">
     <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
   </div>
 
-  <!-- Botão pular / reiniciar -->
   <div class="flex justify-center gap-4">
     <button id="skipBtn" class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-full font-bold transition">⏩ Pular</button>
   </div>

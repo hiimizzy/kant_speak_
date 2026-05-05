@@ -8,6 +8,7 @@ if ($data && isset($data['session'])) {
     $current = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
     $current[] = $data;
     file_put_contents($file, json_encode($current, JSON_PRETTY_PRINT));
+    http_response_code(200);
     echo json_encode(['status' => 'ok']);
 } else {
     http_response_code(400);

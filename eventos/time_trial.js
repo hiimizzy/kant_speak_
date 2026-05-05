@@ -24,8 +24,9 @@ let timer = 5;
 let timerInterval = null;
 let isTimedMode = true;
 let gameActive = true;
-let startTime = null;
 let currentTrialStart = null;
+let experimentGroup = 'control';
+let currentTimeLimit = 5;
 
 // Elementos DOM
 const scoreSpan = document.getElementById('scoreValue');
@@ -38,10 +39,9 @@ const timerTextSpan = document.getElementById('timerText');
 const timerCircle = document.getElementById('timerCircle');
 const starsContainer = document.getElementById('starsContainer');
 
-// Circunferência do círculo (2 * pi * 58 ≈ 364.4)
 const CIRCUMFERENCE = 2 * Math.PI * 58;
 
-// Banco de palavras para gerar distratores (vocabulário do sistema)
+// Banco local de palavras (fallback)
 const vocabulary = [
     { word: "CAT", emoji: "🐱" }, { word: "DOG", emoji: "🐕" }, { word: "SUN", emoji: "☀️" },
     { word: "APPLE", emoji: "🍎" }, { word: "CAR", emoji: "🚗" }, { word: "BIRD", emoji: "🐦" },
@@ -60,29 +60,35 @@ async function fetchScore() {
     } catch (err) { console.error('fetchScore:', err); }
 }
 
+async function fetchExperimentGroup() {
+    try {
+        const resp = await fetch('../api.php?action=get_experiment_group&activity=timetrial');
+        const data = await resp.json();
+        if (data.group) {
+            experimentGroup = data.group;
+            logEvent('group_assignment', { exp: data.experiment_name, group: experimentGroup });
+        }
+    } catch (e) { console.warn(e); }
+}
+
 async function fetchCurrentWord() {
     try {
         const resp = await fetch('../api.php?action=getItem&activity=timetrial');
         const data = await resp.json();
-        if (data.success) {
+        if (data.success && data.item) {
             currentWordObj = data.item;
-            currentWordSpan.textContent = currentWordObj.word;
-            generateOptions();
-            renderOptions();
-            if (isTimedMode) startTimer();
-            logEvent('session_start', { word: currentWordObj.word });
         } else {
-            // Fallback: usar palavra aleatória do banco local (para testes sem backend)
+            // fallback local
             const randomIndex = Math.floor(Math.random() * vocabulary.length);
             currentWordObj = vocabulary[randomIndex];
-            currentWordSpan.textContent = currentWordObj.word;
-            generateOptions();
-            renderOptions();
-            if (isTimedMode) startTimer();
         }
+        currentWordSpan.textContent = currentWordObj.word;
+        generateOptions();
+        renderOptions();
+        if (isTimedMode) startTimer();
+        logEvent('session_start', { word: currentWordObj.word, group: experimentGroup });
     } catch (err) {
         console.error('fetchCurrentWord:', err);
-        // Fallback local
         const randomIndex = Math.floor(Math.random() * vocabulary.length);
         currentWordObj = vocabulary[randomIndex];
         currentWordSpan.textContent = currentWordObj.word;
@@ -98,6 +104,8 @@ async function sendAnswer(selectedWord) {
     formData.append('action', 'check');
     formData.append('activity', 'timetrial');
     formData.append('resposta', selectedWord);
+    formData.append('time_limit', currentTimeLimit);
+    formData.append('group', experimentGroup);
     try {
         const resp = await fetch('../api.php', { method: 'POST', body: formData });
         const data = await resp.json();
@@ -108,7 +116,9 @@ async function sendAnswer(selectedWord) {
                 selected: selectedWord,
                 correct: isCorrect,
                 reactionTime: reactionTime,
-                pointsEarned: isCorrect ? 10 : 0
+                pointsEarned: isCorrect ? 10 : 0,
+                time_limit: currentTimeLimit,
+                group: experimentGroup
             });
             if (data.score !== undefined) {
                 currentScore = data.score;
@@ -116,14 +126,22 @@ async function sendAnswer(selectedWord) {
                 updateStars();
             }
             if (isCorrect) {
+                if (experimentGroup === 'adaptive') {
+                    currentTimeLimit = Math.min(currentTimeLimit + 0.5, 8.0);
+                } else if (isTimedMode) {
+                    currentTimeLimit = Math.min(currentTimeLimit + 0.5, 5.0);
+                }
                 if (isTimedMode) {
-                    timer = Math.min(timer + 2, 5);
+                    timer = currentTimeLimit;
                     updateTimerUI();
                 }
                 nextWord();
             } else {
+                if (experimentGroup === 'adaptive') {
+                    currentTimeLimit = Math.max(currentTimeLimit - 0.5, 3.0);
+                }
                 if (isTimedMode) {
-                    timer -= 1;
+                    timer = currentTimeLimit;
                     updateTimerUI();
                     if (timer <= 0) {
                         stopTimer();
@@ -140,7 +158,7 @@ async function sendAnswer(selectedWord) {
     }
 }
 
-// ========== Timer Functions ==========
+// ========== Timer ==========
 function updateTimerUI() {
     timerTextSpan.textContent = Math.ceil(timer);
     const offset = CIRCUMFERENCE - (timer / 5) * CIRCUMFERENCE;
@@ -157,7 +175,7 @@ function stopTimer() {
 function startTimer() {
     if (!isTimedMode) return;
     if (timerInterval) stopTimer();
-    timer = 5;
+    timer = currentTimeLimit;
     updateTimerUI();
     timerInterval = setInterval(() => {
         if (!gameActive) return;
@@ -174,7 +192,6 @@ function startTimer() {
 
 // ========== Game Logic ==========
 function generateOptions() {
-    // Pega duas palavras aleatórias diferentes da palavra atual
     const others = vocabulary.filter(item => item.word !== currentWordObj.word);
     const shuffled = [...others];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -182,7 +199,6 @@ function generateOptions() {
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     const opts = [currentWordObj, shuffled[0], shuffled[1]];
-    // Embaralhar ordem
     for (let i = opts.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [opts[i], opts[j]] = [opts[j], opts[i]];
@@ -260,11 +276,11 @@ function showFeedback(message, isCorrect) {
 // ========== Inicialização ==========
 async function init() {
     await fetchScore();
+    await fetchExperimentGroup();
     await fetchCurrentWord();
     currentTrialStart = performance.now();
     skipBtn.addEventListener('click', skipWord);
     toggleModeBtn.addEventListener('click', toggleTimerMode);
     logEvent('instrumentation_ready', { version: '1.0' });
 }
-
 init();

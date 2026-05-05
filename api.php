@@ -11,10 +11,7 @@ require_once __DIR__ . '/activities/Alphabet.php';
 require_once __DIR__ . '/activities/Listen.php';
 require_once __DIR__ . '/activities/Speak.php';
 require_once __DIR__ . '/activities/Write.php';
-require_once __DIR__ . '/activities/Karaoke.php';
-require_once __DIR__ . '/activities/Draw.php';
-require_once __DIR__ . '/activities/ISpy.php';
-require_once __DIR__ . '/activities/BuildWord.php';
+require_once __DIR__ . '/activities/TimeTrial.php';
 
 $session = new SessionManager();
 
@@ -95,6 +92,14 @@ $activities = [
 
 ];
 
+$vocabulary = [
+    ["word" => "CAT", "emoji" => "🐱"], ["word" => "DOG", "emoji" => "🐕"],
+    ["word" => "SUN", "emoji" => "☀️"], ["word" => "APPLE", "emoji" => "🍎"],
+    ["word" => "CAR", "emoji" => "🚗"], ["word" => "BIRD", "emoji" => "🐦"],
+    ["word" => "FISH", "emoji" => "🐠"], ["word" => "STAR", "emoji" => "⭐"],
+    ["word" => "HOUSE", "emoji" => "🏠"], ["word" => "BOOK", "emoji" => "📚"]
+];
+
 header('Content-Type: application/json');
 
 $action   = $_POST['action'] ?? $_GET['action'] ?? '';
@@ -134,6 +139,25 @@ try {
 
         case 'getAllItems':
             echo json_encode(['success' => true, 'items' => $act->getAllItems()]);
+            break;
+
+        case 'get_experiment_group':
+            $expFile = __DIR__ . '/data/experiments/active.json';
+            if (file_exists($expFile)) {
+                $exp = json_decode(file_get_contents($expFile), true);
+                $sessionId = session_id();
+                $hash = crc32($sessionId) % 100;
+                $group = 'control';
+                foreach ($exp['groups'] as $g => $range) {
+                    if ($hash >= $range[0] && $hash < $range[1]) {
+                        $group = $g;
+                        break;
+                    }
+                }
+                echo json_encode(['group' => $group, 'experiment_name' => $exp['name']]);
+            } else {
+                echo json_encode(['group' => null]);
+            }
             break;
 
         // ========== NOVOS ENDPOINTS DO PAINEL DO PESQUISADOR ==========

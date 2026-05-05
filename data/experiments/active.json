@@ -1,1 +1,17 @@
-{"name": "Adaptive v1", "groups": ["control", "experimental"], "activities": ["alphabet", "listen", "speak"]}
+{
+  "name": "TimeTrial_AdaptiveTime_vs_Fixed",
+  "groups": {
+    "control": [0, 50],
+    "adaptive": [50, 100]
+  },
+  "default": "control",
+  "metrics": ["accuracy", "reaction_time", "score", "time_limit_used"],
+  "algorithm": "adaptive_time",
+  "parameters": {
+    "initial_time": 5.0,
+    "increment_on_correct": 0.5,
+    "decrement_on_error": 0.5,
+    "max_time": 8.0,
+    "min_time": 3.0
+  }
+}
