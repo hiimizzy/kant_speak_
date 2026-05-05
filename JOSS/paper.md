@@ -33,6 +33,14 @@ KantSpeak is an open-source, web-based platform designed to support English lang
 
 In addition to its educational application, KantSpeak is designed as a reusable software framework for the development and evaluation of adaptive learning interfaces tailored to neurodivergent users. The platform emphasizes controlled interaction patterns, reduced cognitive load, and flexible activity composition, enabling experimentation with different instructional strategies and interaction modalities.
 
+# Research Impact Statement
+
+KantSpeak contributes to research in human-computer interaction, assistive technologies, and adaptive learning systems by providing a modular platform for the development and evaluation of multimodal interaction strategies. 
+
+The system enables researchers to prototype and analyze alternative input mechanisms, such as gesture-based interaction, and to explore structured learning environments tailored to neurodivergent users. 
+
+By supporting extensibility and reproducibility, KantSpeak can be used as a testbed for studying adaptive educational interfaces, user interaction patterns, and inclusive design approaches in language learning contexts.
+
 # Statement of Need
 
 Language learning in children on the autism spectrum involves specific cognitive and behavioral constraints, including variability in attention, sensory sensitivity, and differences in information processing. Existing digital language learning tools are generally optimized for neurotypical users and provide limited support for controlled interaction design and adaptive learning tailored to neurodivergent populations.
