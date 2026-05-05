@@ -1,134 +1,80 @@
-# KantSpeak
+# KantSpeak: An Experimental Framework for Adaptive Learning Research
 
-KantSpeak is an open-source, web-based platform designed to support English language learning through interactive and multimodal activities. The system is structured as a modular and extensible environment, enabling the development and evaluation of adaptive learning strategies, particularly in contexts involving neurodivergent users.
+[![License: BSD-3](https://img.shields.io/badge/License-BSD--3-blue.svg)](LICENSE)
+[![PHP Version](https://img.shields.io/badge/PHP-8.x-blue)](https://php.net)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow)](https://developer.mozilla.org/)
+[![MediaPipe](https://img.shields.io/badge/MediaPipe-Hands-red)](https://developers.google.com/mediapipe)
 
----
+**KantSpeak** is an open‑source experimental framework designed for research in adaptive learning systems, human‑computer interaction, and multimodal educational environments. It enables controlled experiments where learning tasks are dynamically adapted based on user performance (accuracy, response time). The system integrates:
 
-## Overview
+- 📊 **Structured logging** of all interactions  
+- 🧪 **Experiment management** (A/B testing, multi‑arm bandits)  
+- 🤖 **Adaptive engine** (contextual bandits / fuzzy logic)  
+- 📈 **Offline analysis tools** (Python scripts)  
 
-KantSpeak provides a structured interaction environment that integrates visual, auditory, and gesture-based inputs to support language acquisition. The platform is designed to reduce cognitive load through predictable interaction patterns and simplified interface design.
-
-Beyond its educational use, KantSpeak can be used as a prototyping environment for:
-
-* adaptive learning interfaces
-* multimodal interaction strategies
-* assistive educational technologies
-
----
-
-## Key Features
-
-The system is organized into modular components, each targeting specific aspects of language acquisition:
-
-* **Alphabet** – Letter recognition and phonetic awareness
-* **Speak** – Guided oral practice with structured prompts
-* **Write** – Text production and writing exercises
-* **Listen** – Audio-based comprehension tasks
-* **Memory Game** – Vocabulary reinforcement through association
-* **Time Trial** – Timed recall tasks for cognitive engagement
-* **Numbers** – Numerical vocabulary learning
-* **I Spy** – Attention and listening-based interaction
-* **Draw** – Visual-semantic association tasks
-* **Build Word** – Word construction using syllabic components
-* **Sorting Game** – Categorization and semantic grouping
-* **Karaoke** – Pronunciation and rhythm training through music
+Unlike conventional educational software, KantSpeak is built as a **research instrument** – fully transparent, reproducible, and extensible.
 
 ---
 
-## System Architecture
+## 🧩 System Overview
 
-KantSpeak follows a modular architecture composed of:
+KantSpeak consists of five core components:
 
-* **Interaction Layer**
-  Handles user input and output, including gesture-based interaction via browser-supported visual input (Air Canvas).
+| Component | Description |
+|-----------|-------------|
+| **Logger** | Records every user action (clicks, answers, voice input, gestures) with timestamps and metadata. |
+| **ExperimentManager** | Assigns participants to experimental groups and controls conditions (JSON configurable). |
+| **AdaptiveEngine** | Implements Thompson Sampling (contextual bandits) and fuzzy rule‑based adaptation. |
+| **Instrument API** | HTTP endpoints `/instrument.php` (logging) and `/adapt.php` (next action recommendation). |
+| **Offline Analysis** | Python scripts for descriptive stats, hypothesis testing, and learning curve visualization. |
 
-* **Content Module**
-  Organizes educational activities into structured units targeting multiple language skills.
+The front‑end uses vanilla JavaScript, Tailwind CSS, and integrates:
+- **MediaPipe Hands** – real‑time finger tracking for drawing letters in the air.
+- **Web Speech API** – speech synthesis (English) and recognition for pronunciation activities.
 
-* **Progression Structure**
-  Supports flexible navigation and controlled sequencing of activities.
-
-* **Session Context (optional extension)**
-  Can be extended to track user interactions for analysis and adaptive behavior.
-
-This architecture enables extensibility and facilitates integration with additional components such as machine learning models or analytics modules.
-
----
-
-## Gesture-Based Interaction
-
-KantSpeak integrates an Air Canvas component using web-based technologies, enabling gesture-based interaction directly in the browser.
-
-This allows users to:
-
-* interact through hand movements
-* engage with activities without physical contact
-* explore alternative interaction modalities
-
-No additional installation is required beyond a compatible browser.
+Back‑end is plain PHP 8.x with a modular, object‑oriented architecture. All data is stored in structured JSON files, easily exportable for further analysis.
 
 ---
 
-## Technologies
+## 🎯 Use Cases
 
-KantSpeak is implemented using:
-
-* HTML, CSS, JavaScript
-* PHP (backend services)
-* Web-based computer vision integration (Air Canvas)
+- **Academic research**: Evaluate different adaptation policies (bandit vs. rule‑based) on learning outcomes.
+- **Special education**: Study how children with autism spectrum disorder (levels 1‑2) respond to multimodal, adaptive tasks.
+- **HCI studies**: Measure the impact of gesture‑based input vs. mouse/touch on engagement and error rates.
+- **Benchmarking**: Compare different reinforcement learning algorithms in a realistic educational environment.
 
 ---
 
-## Installation
+## 📦 Activities Included
+
+The framework currently provides 8+ fully instrumented learning activities:
+
+| Activity | Modality | Adaptive Features |
+|----------|----------|-------------------|
+| Alphabet | Gesture (finger) + speech | Next letter selection, difficulty (size, speed) |
+| Listen | Audio comprehension | Item difficulty (word length, noise) |
+| Speak | Voice recognition | Prompt complexity, repetition threshold |
+| Write | Typing | Word length, hint availability |
+| Sorting Game | Drag & drop | Number of categories, item count |
+| Build a Word | Drag & drop (syllables) | Syllable length, word complexity |
+| Math Builder | Drag & drop + input | Number range, operator type (+/-) |
+| I Spy | Object detection (camera) | Category difficulty, time per task |
+
+All activities send interaction events to the logger and can be easily extended or modified.
+
+---
+
+## 🚀 Quick Start (Local Installation)
 
 ### Requirements
+- PHP 8.0+ (with `session` extension)
+- Web server (Apache / Nginx) or PHP built‑in server
+- Modern browser (Chrome, Edge, Firefox) – camera and microphone required for some activities
 
-* Modern web browser (Chrome, Firefox, Edge)
-* Local server environment (e.g., XAMPP)
-
-### Setup
-
-1. Clone the repository:
-
+### Installation
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/seu-usuario/kantspeak.git
-   ```
-
-2. Navigate to the project directory:
-
-   ```bash
-   cd kantspeak
-   ```
-
-3. Move the project to your server directory:
-
-   ```
-   htdocs/ (XAMPP)
-   ```
-
-4. Start the local server and open in browser:
-
-   ```
-   http://localhost/kantspeak
-   ```
-
----
-
-## Potential Use Cases
-
-* Language learning support in inclusive education
-* Prototyping adaptive learning systems
-* Research in human-computer interaction (HCI)
-* Assistive technology development
-
----
-
-## Contribution
-
-Contributions are welcome. The modular structure allows the addition of new activities, interaction methods, or adaptive components.
-
----
-
-## License
-
-Specify your license here (e.g., MIT, GPL-3.0).
+   git clone https://github.com/yourlab/kant_speak_
+   cd kant_speak_
+2. Start a PHP server
+   php -S localhost:8000
