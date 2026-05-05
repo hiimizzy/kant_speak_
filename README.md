@@ -109,9 +109,6 @@ cd kant_speak_
 ### Research Dashboard Access
 The Researcher Dashboard is available at: 
 `researcher/index.html`
-Demo Access
-For demonstration purposes, access to the dashboard is protected with a simple authentication key:
-`Password: kant2026`
 
 
 
