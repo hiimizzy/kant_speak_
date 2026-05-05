@@ -102,7 +102,17 @@ A web-based interface for data analysis and visualization:
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-repo/kantspeak.git
+git clone https://github.com/your-repo/kant_speak_
 cd kant_speak_
+```
+
+### Research Dashboard Access
+The Researcher Dashboard is available at: 
+`researcher/index.html`
+Demo Access
+For demonstration purposes, access to the dashboard is protected with a simple authentication key:
+`Password: kant2026`
+
+
 
 
