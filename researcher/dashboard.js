@@ -1,5 +1,5 @@
 async function loadData() {
-    const res = await fetch('../api.php?action=get_researcher_data');
+fetch('/api.php?action=get_researcher_data')
     const data = await res.json();
     if (data.success) {
         document.getElementById('totalSessions').innerText = data.total_sessions;
@@ -9,5 +9,5 @@ async function loadData() {
     }
 }
 document.getElementById('refresh').addEventListener('click', loadData);
-document.getElementById('exportCSV').addEventListener('click', () => window.open('../api.php?action=export_logs&format=csv'));
+'/api.php?action=export_logs&format=csv'
 loadData();
