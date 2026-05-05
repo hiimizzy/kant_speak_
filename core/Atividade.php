@@ -11,35 +11,21 @@ abstract class Atividade {
         $this->indexKey = $indexKey;
         $this->session = $session;
     }
-
-public function getCurrentIndex(): int {
+    protected function getCurrentIndex(): int {
         return $this->session->get($this->indexKey, 0);
     }
-
-    public function setCurrentIndex(int $index): void {
+    protected function setCurrentIndex(int $index): void {
         $this->session->set($this->indexKey, $index);
     }
-
     public function getCurrentItem() {
-        $idx = $this->getCurrentIndex();
-        return $this->itens[$idx] ?? null;
+        return $this->itens[$this->getCurrentIndex()] ?? null;
     }
-
     public function advance(): void {
-        $total = count($this->itens);
-        $this->setCurrentIndex(($this->getCurrentIndex() + 1) % $total);
+        $next = ($this->getCurrentIndex() + 1) % count($this->itens);
+        $this->setCurrentIndex($next);
     }
-
     protected function addPoints(int $value): void {
         $this->session->incrementScore($value);
     }
-
-    public function getData(): array {
-        return [
-            'nome' => $this->nome,
-            'item' => $this->getCurrentItem()
-        ];
-    }
-
     abstract public function process(array $post): void;
 }

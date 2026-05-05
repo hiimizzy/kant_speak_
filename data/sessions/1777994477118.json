@@ -1,0 +1,85 @@
+[
+    {
+        "session": "1777994477118",
+        "activity": "buildword",
+        "event": "drag_start",
+        "timestamp": 1777994533.619,
+        "data": {
+            "syllable": "BI",
+            "timeFromStart": 1.3733000000119209
+        }
+    },
+    {
+        "session": "1777994477118",
+        "activity": "buildword",
+        "event": "drop",
+        "timestamp": 1777994533.945,
+        "data": {
+            "syllable": "BI",
+            "slotIndex": 0,
+            "correct": true,
+            "timeFromStart": 1.6990999999940395
+        }
+    },
+    {
+        "session": "1777994477118",
+        "activity": "buildword",
+        "event": "drag_start",
+        "timestamp": 1777994534.604,
+        "data": {
+            "syllable": "RD",
+            "timeFromStart": 2.3574000000059603
+        }
+    },
+    {
+        "session": "1777994477118",
+        "activity": "buildword",
+        "event": "drop",
+        "timestamp": 1777994534.882,
+        "data": {
+            "syllable": "RD",
+            "slotIndex": 1,
+            "correct": true,
+            "timeFromStart": 2.6355
+        }
+    },
+    {
+        "session": "1777994477118",
+        "activity": "buildword",
+        "event": "word_complete",
+        "timestamp": 1777994534.907,
+        "data": {
+            "word": "BIRD",
+            "correct": true,
+            "totalTime": 2.6365,
+            "attempts": 2
+        }
+    },
+    {
+        "session": "1777994477118",
+        "activity": "buildword",
+        "event": "check_manual",
+        "timestamp": 1777994534.906,
+        "data": {
+            "userAnswer": "BIRD",
+            "correct": true,
+            "pointsEarned": 10,
+            "reactionTime": 2.6365,
+            "attempts": 1
+        }
+    },
+    {
+        "session": "1777994477118",
+        "activity": "buildword",
+        "event": "session_start",
+        "timestamp": 1777994534.98,
+        "data": {
+            "word": "APPLE",
+            "syllables": [
+                "AP",
+                "PLE"
+            ],
+            "level": 1
+        }
+    }
+]

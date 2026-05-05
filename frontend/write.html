@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Write - Kant Speak</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-sky-50 to-indigo-50 p-4">
+  <div class="max-w-lg mx-auto bg-white rounded-2xl shadow p-6">
+    <div class="flex justify-between mb-4"><a href="home.html" class="bg-gray-200 rounded-full p-2">←</a><div class="bg-amber-100 px-4 py-2 rounded-full">⭐ <span id="scoreValue">0</span></div></div>
+    <h1 class="text-3xl font-bold text-center text-purple-600">✏️ Write</h1>
+    <div class="text-center text-8xl my-4" id="wordEmoji">🐕</div>
+    <p class="text-center text-gray-500" id="translationText">(cachorro)</p>
+    <input type="text" id="wordInput" placeholder="Digite a palavra..." class="w-full border-2 rounded-xl p-3 text-center text-2xl my-4">
+    <div class="flex justify-center gap-4"><button id="checkBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-bold">Verificar</button><button id="hintBtn" class="bg-amber-500 text-white px-6 py-3 rounded-full font-bold">Ouvir</button></div>
+    <button id="nextBtn" class="w-full bg-amber-500 text-white py-3 rounded-full font-bold mt-6">Próxima →</button>
+    <div id="feedbackContainer" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 pointer-events-none"></div>
+  </div>
+  <script src="../eventos/write.js"></script>
+</body>
+</html>

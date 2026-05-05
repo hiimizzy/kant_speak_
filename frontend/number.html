@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kant Speak - Listen</title>
-  <link rel="shortcut icon" href="img/autismo.png" type="image/x-icon">
+  <title>Kant Speak - Write</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="shortcut icon" href="img/autismo.png" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { font-family: 'Nunito', sans-serif; }
@@ -14,12 +14,7 @@
       100% { opacity: 0; transform: translateY(-20px); }
     }
     .feedback-toast { animation: fadeOut 2s forwards; }
-    .bounce-in { animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-    @keyframes bounceIn {
-      0% { transform: scale(0.3); opacity: 0; }
-      80% { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
-    }
+    input:focus { outline: none; ring: 2px solid #4A90E2; }
   </style>
 </head>
 <body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen p-4 md:p-6">
@@ -31,24 +26,26 @@
         <span id="scoreValue" class="font-bold text-gray-800 text-xl">0</span>
       </div>
     </div>
-    <h2 class="text-3xl font-bold text-center text-gray-700">👂 Ouça e aprenda!</h2>
+    <h2 class="text-3xl font-bold text-center text-gray-700">📝 Escreva em inglês os números!</h2>
     <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 flex flex-col items-center gap-6">
-      <div class="text-8xl" id="wordEmoji">🍎</div>
-      <div id="revealArea" class="text-center hidden">
-        <p class="text-4xl font-bold text-blue-600" id="revealWord">APPLE</p>
-        <p class="text-xl text-gray-500" id="revealTranslation">(maçã)</p>
-      </div>
+      <div class="text-8xl" id="numberEmoji">0️⃣</div>
+      <p class="text-2xl text-gray-500" id="translationText">(zero)</p>
+      <input type="text" id="wordInput" placeholder="Digite a palavra..." class="w-full text-2xl text-center p-4 rounded-xl border-2 border-gray-200 bg-gray-50 font-bold focus:border-blue-500 transition-all shadow-sm">
       <div class="flex gap-4 flex-wrap justify-center">
-        <button id="listenBtn" class="bg-blue-600 text-white px-8 py-4 rounded-xl text-xl font-bold hover:bg-blue-700 transition-all shadow-md">🔊 Ouvir</button>
-        <button id="revealBtn" class="bg-green-500 text-white px-8 py-4 rounded-xl text-xl font-bold hover:bg-green-600 transition-all shadow-md">👀 Ver palavra</button>
+        <button id="checkBtn" class="bg-blue-600 text-white px-8 py-4 rounded-xl text-xl font-bold hover:bg-blue-700 transition-all shadow-md disabled:opacity-50">✅ Verificar</button>
+        <button id="hintBtn" class="bg-amber-500 text-white px-8 py-4 rounded-xl text-xl font-bold hover:bg-amber-600 transition-all shadow-md">🔊 Ouvir</button>
       </div>
     </div>
     <div id="feedbackContainer" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none"></div>
     <div class="bg-white/70 rounded-2xl p-3 flex justify-center gap-2 shadow-sm" id="starsContainer">
       <span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span><span class="text-3xl star">⭐</span>
     </div>
-    <button id="nextBtn" class="bg-amber-500 text-white font-bold py-3 rounded-xl text-xl shadow-md hover:shadow-xl transition-all mx-auto w-full max-w-xs">Próxima palavra →</button>
+    <button id="nextBtn" class="bg-amber-500 text-white font-bold py-3 rounded-xl text-xl shadow-md hover:shadow-xl transition-all mx-auto w-full max-w-xs">⏩ Next</button>
   </div>
-  <script src="./eventos/listen.js"></script>
+<script src="./eventos/number.js"></script>
+</xai:function_call name="edit_file">
+
+<xai:function_call name="edit_file">
+<parameter name="path">frontend/sorting.html
 </body>
 </html>

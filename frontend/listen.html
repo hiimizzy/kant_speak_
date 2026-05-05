@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listen - Kant Speak</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style> .feedback-toast { animation: fadeOut 2s forwards; } @keyframes fadeOut { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-20px); } } </style>
+</head>
+<body class="bg-gradient-to-br from-sky-50 to-indigo-50 min-h-screen p-4">
+  <div class="max-w-lg mx-auto bg-white/80 rounded-2xl shadow p-6">
+    <div class="flex justify-between mb-4"><a href="home.html" class="bg-gray-200 rounded-full p-2">←</a><div class="bg-amber-100 px-4 py-2 rounded-full">⭐ <span id="scoreValue">0</span></div></div>
+    <h1 class="text-3xl font-bold text-center text-green-600">👂 Listen</h1>
+    <div class="text-center text-8xl my-4" id="wordEmoji">🍎</div>
+    <div id="revealArea" class="text-center hidden"><p class="text-4xl font-bold text-blue-600" id="revealWord"></p><p class="text-xl text-gray-500" id="revealTranslation"></p></div>
+    <div class="flex justify-center gap-4 my-6"><button id="listenBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-bold">🔊 Ouvir</button><button id="revealBtn" class="bg-green-600 text-white px-6 py-3 rounded-full font-bold">👀 Ver palavra</button></div>
+    <button id="nextBtn" class="w-full bg-amber-500 text-white py-3 rounded-full font-bold">Próxima →</button>
+    <div id="feedbackContainer" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 pointer-events-none"></div>
+  </div>
+  <script src="../eventos/listen.js"></script>
+</body>
+</html>

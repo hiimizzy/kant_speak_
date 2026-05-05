@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Researcher Dashboard - KantSpeak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold">📊 KantSpeak - Researcher Dashboard</h1>
+        <div class="grid grid-cols-4 gap-4 my-6">
+            <div class="bg-white p-4 rounded shadow">Total Sessions: <span id="totalSessions">0</span></div>
+            <div class="bg-white p-4 rounded shadow">Avg Accuracy: <span id="avgAccuracy">0%</span></div>
+            <div class="bg-white p-4 rounded shadow">Avg Response Time: <span id="avgTime">0s</span></div>
+            <div class="bg-white p-4 rounded shadow">Active Exp: <span id="activeExp">None</span></div>
+        </div>
+        <canvas id="accuracyChart" height="100"></canvas>
+        <div class="mt-6">
+            <button id="exportCSV" class="bg-green-600 text-white px-4 py-2 rounded">Export CSV</button>
+            <button id="refresh" class="bg-blue-600 text-white px-4 py-2 rounded">Refresh</button>
+        </div>
+    </div>
+    <script src="dashboard.js"></script>
+</body>
+</html>
