@@ -1,9 +1,15 @@
+// ========== CONFIGURAÇÃO DO CAMINHO BASE ==========
+// Altere para o caminho onde estão api.php e instrument.php no seu servidor
+// Exemplo: se o projeto estiver em http://localhost/kant_speak/ , use '/kant_speak/'
+// Se estiver na raiz do servidor (http://localhost/), use ''
+const BASE_URL = '/kant_speak/';  // ← AJUSTE CONFORME SUA INSTALAÇÃO
+
 // ========== INSTRUMENTATION ==========
 const SESSION_ID = localStorage.getItem('kant_session') || Date.now().toString();
 localStorage.setItem('kant_session', SESSION_ID);
 
 function logEvent(eventType, payload) {
-    fetch('../instrument.php', {
+    fetch(`${BASE_URL}instrument.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -61,10 +67,11 @@ drawCtx.lineWidth = 8;
 drawCtx.lineCap = 'round';
 drawCtx.lineJoin = 'round';
 
-// ========== API Calls (caminhos corrigidos) ==========
+// ========== API Calls (com BASE_URL) ==========
 async function fetchCurrentItem() {
     try {
-        const resp = await fetch('../api.php?action=getItem&activity=alphabet');
+        const resp = await fetch(`${BASE_URL}api.php?action=getItem&activity=alphabet`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
         if (data.success) {
             currentLetter = data.item;
@@ -74,16 +81,18 @@ async function fetchCurrentItem() {
             logEvent('session_start', { letter: currentLetter });
         } else {
             console.error('Erro ao buscar letra:', data);
+            showFeedback('❌ Servidor não respondeu corretamente', false);
         }
     } catch (err) {
         console.error('fetchCurrentItem:', err);
-        showFeedback('❌ Erro ao conectar com o servidor', false);
+        showFeedback('❌ Erro ao conectar com o servidor (verifique se o PHP está rodando)', false);
     }
 }
 
 async function fetchScore() {
     try {
-        const resp = await fetch('../api.php?action=getScore');
+        const resp = await fetch(`${BASE_URL}api.php?action=getScore`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
         if (data.score !== undefined) {
             currentScore = data.score;
@@ -92,6 +101,7 @@ async function fetchScore() {
         }
     } catch (err) {
         console.error('fetchScore:', err);
+        // Não exibe feedback para não incomodar, apenas log
     }
 }
 
@@ -102,7 +112,8 @@ async function checkAnswer(resposta) {
     formData.append('activity', 'alphabet');
     formData.append('resposta', resposta);
     try {
-        const resp = await fetch('../api.php', { method: 'POST', body: formData });
+        const resp = await fetch(`${BASE_URL}api.php`, { method: 'POST', body: formData });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
         if (data.success) {
             const isCorrect = data.feedback.includes('Acertou');
@@ -120,19 +131,20 @@ async function checkAnswer(resposta) {
                 updateStars(currentScore);
             }
             if (isCorrect) {
-                await fetchCurrentItem(); // nova letra (backend já avançou)
+                await fetchCurrentItem();
                 clearDrawing();
             }
         }
     } catch (err) {
         console.error(err);
-        showFeedback('❌ Erro ao verificar', false);
+        showFeedback('❌ Erro ao verificar resposta', false);
     }
 }
 
 async function nextLetter() {
     try {
-        const resp = await fetch('../api.php?action=next&activity=alphabet');
+        const resp = await fetch(`${BASE_URL}api.php?action=next&activity=alphabet`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
         if (data.success) {
             await fetchCurrentItem();
@@ -141,7 +153,7 @@ async function nextLetter() {
         }
     } catch (err) {
         console.error(err);
-        showFeedback('❌ Erro ao avançar', false);
+        showFeedback('❌ Erro ao avançar letra', false);
     }
 }
 
