@@ -75,5 +75,14 @@
         "data": {
             "letter": "B"
         }
+    },
+    {
+        "session": "1777994477118",
+        "activity": "alphabet",
+        "event": "session_start",
+        "timestamp": 1778011375.286,
+        "data": {
+            "letter": "B"
+        }
     }
 ]
