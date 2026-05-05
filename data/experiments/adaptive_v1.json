@@ -1,0 +1,9 @@
+{
+    "name": "Adaptive vs Random Activity Selection",
+    "groups": {
+        "control": [0, 50],
+        "adaptive": [50, 100]
+    },
+    "default": "control",
+    "metrics": ["score", "engagement_time", "error_rate"]
+}

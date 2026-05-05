@@ -333,4 +333,40 @@ async function init() {
   initHandTracking().catch(console.warn);
 }
 
+// Função de log
+function logEvent(eventType, payload) {
+    fetch('instrument.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            activity: 'alphabet',
+            event: eventType,
+            payload: payload,
+            timestamp: Date.now()
+        })
+    });
+}
+
+// No início da sessão
+logEvent('session_start', { letter: currentLetter });
+
+// No momento da verificação
+async function handleCheck() {
+    const startTime = performance.now();
+    // ... lógica de validação
+    const reactionTime = performance.now() - startTime;
+    logEvent('check', { correct: isCorrect, points: 10, reactionTime: reactionTime });
+    // Atualiza histórico local
+    updateAdaptiveHistory('alphabet', isCorrect);
+}
+
+// Função para consultar adaptação (ex.: após acerto)
+async function getNextRecommendation() {
+    const resp = await fetch('adapt.php');
+    const data = await resp.json();
+    if (data.next_activity) {
+        showSuggestion(`Try ${data.next_activity} next!`);
+    }
+}
+
 init();
