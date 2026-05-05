@@ -1,12 +1,12 @@
 ---
-title: "KantSpeak: A Modular and Adaptive Platform for Language Learning in Children on the Autism Spectrum"
+title: "KantSpeak: An Experimental Framework for Adaptive Learning Research Using Multimodal Interaction and Contextual Bandits"
 
 tags:
-  - autism
-  - adaptive systems
+  - adaptive learning
   - human-computer interaction
-  - language learning
-  - assistive technology
+  - contextual bandits
+  - educational data mining
+  - autism spectrum disorder
 
 authors:
   - name: Isabela Araujo Costa
@@ -29,63 +29,154 @@ bibliography: paper.bib
 
 # Summary
 
-KantSpeak is an open-source, web-based platform designed to support English language learning for children on the autism spectrum (ASD), particularly those classified within support levels 1 and 2. The system provides a modular and extensible architecture that integrates multimodal interaction mechanisms, including visual prompts, auditory feedback, and gesture-based input.
+KantSpeak is an open-source experimental framework designed for research in adaptive learning systems, human-computer interaction, and multimodal educational environments. The system enables controlled experiments in which learning tasks are dynamically adapted based on user performance, including accuracy and response time.
 
-In addition to its educational application, KantSpeak is designed as a reusable software framework for the development and evaluation of adaptive learning interfaces tailored to neurodivergent users. The platform emphasizes controlled interaction patterns, reduced cognitive load, and flexible activity composition, enabling experimentation with different instructional strategies and interaction modalities.
+Unlike conventional educational software, KantSpeak is designed as a research instrument. It integrates a logging system, an experimental management layer, an adaptive decision engine, and tools for offline statistical analysis, enabling reproducible studies on adaptive learning strategies.
 
-# Research Impact Statement
-
-KantSpeak contributes to research in human-computer interaction, assistive technologies, and adaptive learning systems by providing a modular platform for the development and evaluation of multimodal interaction strategies. 
-
-The system enables researchers to prototype and analyze alternative input mechanisms, such as gesture-based interaction, and to explore structured learning environments tailored to neurodivergent users. 
-
-By supporting extensibility and reproducibility, KantSpeak can be used as a testbed for studying adaptive educational interfaces, user interaction patterns, and inclusive design approaches in language learning contexts.
+---
 
 # Statement of Need
 
-Language learning in children on the autism spectrum involves specific cognitive and behavioral constraints, including variability in attention, sensory sensitivity, and differences in information processing. Existing digital language learning tools are generally optimized for neurotypical users and provide limited support for controlled interaction design and adaptive learning tailored to neurodivergent populations.
+Adaptive learning research requires reproducible experimental environments that allow systematic evaluation of how users respond to different pedagogical strategies and interaction modalities.
 
-Although assistive technologies have been proposed to support communication and learning in ASD, there remains a lack of software platforms that simultaneously:
+Existing educational applications often implement proprietary or non-transparent adaptation mechanisms, limiting reproducibility and comparative evaluation. Furthermore, many assistive learning tools for neurodivergent populations lack structured data collection pipelines for scientific analysis.
 
-- provide structured and predictable interaction environments  
-- support multimodal and alternative input mechanisms  
-- enable extensibility for experimentation and reproducibility  
+KantSpeak addresses these limitations by providing a modular and extensible experimental framework that supports:
 
-KantSpeak addresses this gap by offering a modular platform that allows researchers and developers to explore interaction strategies and adaptive learning approaches in the context of autism-focused language education.
+- controlled experimental design  
+- transparent adaptive decision-making  
+- structured behavioral data collection  
+- reproducible offline analysis  
+
+This enables researchers to design, execute, and validate adaptive learning hypotheses in a controlled and extensible environment.
+
+---
+
+# Research Impact Statement
+
+KantSpeak contributes to research in adaptive learning systems by providing a complete experimental pipeline for studying context-dependent adaptation strategies in educational tasks. The framework supports evaluation of bandit-based and rule-based adaptive policies in multimodal learning environments.
+
+By decoupling interaction, adaptation, and analysis layers, KantSpeak enables reproducible experimentation and comparative evaluation of adaptive strategies, particularly in contexts involving heterogeneous cognitive profiles.
+
+---
+
+# Framework Architecture
+
+KantSpeak is composed of five integrated components:
+
+## 1. Logger
+
+The Logger records all user interactions with precise timestamps, including:
+
+- user responses  
+- correctness of actions  
+- response times  
+- contextual metadata  
+
+All data is stored in structured formats suitable for downstream analysis.
+
+---
+
+## 2. ExperimentManager
+
+The ExperimentManager orchestrates experimental execution by:
+
+- assigning participants to experimental groups  
+- controlling experimental conditions  
+- aggregating session-level metrics  
+- ensuring consistency across trials  
+
+---
+
+## 3. AdaptiveEngine
+
+The AdaptiveEngine implements decision policies for task selection. Two approaches are supported:
+
+- **Contextual Bandits (Thompson Sampling)** for probabilistic action selection  
+- **Fuzzy Rule-Based System** for interpretable adaptation strategies  
+
+The engine dynamically selects the next activity based on observed user performance.
+
+---
+
+## 4. Instrument API
+
+The system exposes HTTP endpoints for integration:
+
+- `/instrument.php` — ingestion of interaction logs  
+- `/adapt.php` — returns next adaptive action  
+
+This enables decoupling between front-end interaction and experimental logic.
+
+---
+
+## 5. Offline Analysis Module
+
+Python-based scripts provide:
+
+- descriptive statistics  
+- hypothesis testing (t-tests, ANOVA)  
+- learning curve visualization  
+- comparative analysis between experimental groups  
+
+---
+
+# Adaptive Model
+
+The adaptive mechanism computes a performance score based on:
+
+- accuracy of responses  
+- response time  
+
+This score is used to update the probability distribution over possible next activities (bandit approach) or to evaluate fuzzy rules for difficulty adjustment.
+
+The system supports configurable weighting parameters, enabling experimental variation across studies.
+
+---
+
+# Data and Reproducibility
+
+KantSpeak ensures reproducibility through:
+
+- structured JSON logging of all interactions  
+- configurable experimental parameters  
+- separation of experimental logic and UI components  
+- exportable datasets for offline analysis  
+
+This allows complete reconstruction of experimental sessions.
+
+---
 
 # State of the Field
 
-Digital platforms for language learning rely on gamification and repetition-based strategies to promote engagement and retention. While effective for large-scale use, these systems typically follow standardized interaction models and offer limited adaptability to specific cognitive profiles.
+Existing adaptive learning systems typically rely on proprietary or non-reproducible algorithms. Educational applications such as Duolingo implement adaptive mechanisms but do not expose their decision models for research replication.
 
-In parallel, assistive technologies for autism often focus on isolated functionalities, such as visual schedules or augmentative communication tools, rather than integrated environments for structured language acquisition.
+Assistive educational tools for neurodivergent populations often prioritize usability over experimental control, limiting their scientific applicability.
 
-KantSpeak situates itself at the intersection of these domains by combining:
+KantSpeak differs by explicitly exposing:
 
-- structured language learning activities  
-- multimodal interaction design  
-- support for alternative input mechanisms  
+- adaptive decision policies  
+- experimental configuration interfaces  
+- reproducible data pipelines  
 
-The platform is intended not only as an application but also as an experimental environment for studying adaptive interaction and learning processes in neurodivergent users.
+---
 
-# Software Design
+# Software Implementation
 
-KantSpeak is implemented as a web-based system with a modular architecture that separates interaction, content delivery, and user progression components. This design supports extensibility and facilitates integration with additional computational modules.
+KantSpeak is implemented using standard web technologies:
 
-The system includes the following components:
+- HTML, CSS, JavaScript (frontend)  
+- PHP (API layer)  
+- Python (offline analysis tools)  
 
-- **Interaction Layer**: Provides multimodal input/output, including visual, auditory, and gesture-based interaction through a browser-supported Air Canvas mechanism.  
-- **Content Module**: Organizes learning activities into structured units targeting vocabulary acquisition, phonetic recognition, and listening comprehension.  
-- **Progression Mechanism**: Supports controlled sequencing of activities, enabling adaptive learning paths based on user interaction patterns.  
-- **Session Tracking**: Records user interactions, allowing analysis and reproducibility of learning behavior.
+The architecture is modular, allowing independent modification of experimental, interaction, and analysis layers.
 
-This architecture enables the system to function both as an educational tool and as a platform for prototyping and evaluating adaptive learning strategies.
+---
 
 # Figures
 
-![Main interface of KantSpeak showing available modules.](images/interface.png)
+![KantSpeak modular interface showing experimental activities and adaptive system flow.](images/interface.png)
 
-# AI Usage Disclosure
-
-AI-based tools were used to generate visual assets for specific interface components (e.g., karaoke module). All generated content was reviewed and validated by the authors before integration into the system.
+---
 
 # References
