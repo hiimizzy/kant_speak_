@@ -1,11 +1,12 @@
 ---
-title: "KantSpeak: Interactive English Language Learning for Children on the Autism Spectrum (Levels 1 and 2)"
+title: "KantSpeak: A Modular and Adaptive Platform for Language Learning in Children on the Autism Spectrum"
 
 tags:
   - autism
-  - education
-  - computer vision
+  - adaptive systems
+  - human-computer interaction
   - language learning
+  - assistive technology
 
 authors:
   - name: Isabela Araujo Costa
@@ -19,53 +20,64 @@ authors:
     affiliation: 1
 
 affiliations:
-  - name: Universidade do Estado do Pará, Redenção, Brazil.
+  - name: Universidade do Estado do Pará, Redenção, Brazil
     index: 1
 
 date: 2026
 bibliography: paper.bib
 ---
 
-#  Summary  
-KantSpeak is an open-source web-based platform designed to support English language learning for children on the autism spectrum (ASD), particularly those classified within support levels 1 and 2\. The system provides interactive and multimodal activities that combine visual, auditory, and textual elements to facilitate engagement and comprehension.
+# Summary
 
-The platform adopts a modular approach, allowing users to select different types of activities, including phonetic recognition, listening comprehension, and word association tasks. KantSpeak aims to reduce cognitive overload by offering a simple, predictable interface that supports autonomous interaction and structured learning experiences. Additionally, the system integrates a web-based Air Canvas interface that enables gesture-based interaction through browser-supported visual input mechanisms.
+KantSpeak is an open-source, web-based platform designed to support English language learning for children on the autism spectrum (ASD), particularly those classified within support levels 1 and 2. The system provides a modular and extensible architecture that integrates multimodal interaction mechanisms, including visual prompts, auditory feedback, and gesture-based input.
 
-# Statement of need  
-   
-According to data from the National Institute of Educational Studies and Research Anísio Teixeira, through the School Census, there has been continuous growth in the enrollment of special education students in regular classes in recent years, indicating an expansion of inclusion policies in the country.
+In addition to its educational application, KantSpeak is designed as a reusable software framework for the development and evaluation of adaptive learning interfaces tailored to neurodivergent users. The platform emphasizes controlled interaction patterns, reduced cognitive load, and flexible activity composition, enabling experimentation with different instructional strategies and interaction modalities.
 
-Given this increase in autistic children with ASD in regular education, especially in public schools, it is necessary to increase the visibility of this population and promote strategies that ensure the quality of teaching and learning, keeping in mind the need to provide quality education.KantSpeak aims to be an educational tool for teaching the English language through interactive activities, based on the diversity of learning processes. It is based on the premise that there are different ways of assimilating content.
+# Statement of Need
 
-# State of the field
+Language learning in children on the autism spectrum involves specific cognitive and behavioral constraints, including variability in attention, sensory sensitivity, and differences in information processing. Existing digital language learning tools are generally optimized for neurotypical users and provide limited support for controlled interaction design and adaptive learning tailored to neurodivergent populations.
 
-There are several digital tools designed to support language learning. One of the most widely used platforms is Duolingo, which offers structured activities aimed at teaching languages through repetition, gamification, and individualized progression.  
-Despite its effectiveness in promoting engagement, such platforms are primarily designed for individual use and often emphasize standardized learning paths, with limited adaptation to specific educational contexts or diverse cognitive needs.
+Although assistive technologies have been proposed to support communication and learning in ASD, there remains a lack of software platforms that simultaneously:
 
-With a premise focused on inclusion in schools, the aim is to strengthen student performance through the development of projects focused on education. The system is designed to support different forms of content assimilation by providing a range of interactive activities that target multiple language skills, including phonetic recognition, listening comprehension, and word formation.
+- provide structured and predictable interaction environments  
+- support multimodal and alternative input mechanisms  
+- enable extensibility for experimentation and reproducibility  
 
-In contrast to traditional language learning applications, KantSpeak prioritizes simplicity and usability, aiming to reduce cognitive overload and encourage student autonomy during interaction. 
+KantSpeak addresses this gap by offering a modular platform that allows researchers and developers to explore interaction strategies and adaptive learning approaches in the context of autism-focused language education.
 
-# Software design
+# State of the Field
 
-KantSpeak is designed as an accessible, simple, and intuitive web-based platform for language learning. The system adopts a modular structure, where users can select different activities from the main interface according to their learning needs. This approach allows flexible interaction and supports multiple dimensions of language acquisition. 
+Digital platforms for language learning rely on gamification and repetition-based strategies to promote engagement and retention. While effective for large-scale use, these systems typically follow standardized interaction models and offer limited adaptability to specific cognitive profiles.
 
-Key features include:
+In parallel, assistive technologies for autism often focus on isolated functionalities, such as visual schedules or augmentative communication tools, rather than integrated environments for structured language acquisition.
 
- - Interactive activities targeting vocabulary acquisition and phonetic recognition  
- - Audio-visual association tasks to reinforce language learning  
- - A simplified user interface designed to minimize cognitive load  
- - Modular navigation allowing flexible interaction
+KantSpeak situates itself at the intersection of these domains by combining:
 
-The system integrates computer vision components to enable interaction based on visual input, supporting alternative forms of engagement beyond traditional input methods.
+- structured language learning activities  
+- multimodal interaction design  
+- support for alternative input mechanisms  
 
-# Figures 
+The platform is intended not only as an application but also as an experimental environment for studying adaptive interaction and learning processes in neurodivergent users.
+
+# Software Design
+
+KantSpeak is implemented as a web-based system with a modular architecture that separates interaction, content delivery, and user progression components. This design supports extensibility and facilitates integration with additional computational modules.
+
+The system includes the following components:
+
+- **Interaction Layer**: Provides multimodal input/output, including visual, auditory, and gesture-based interaction through a browser-supported Air Canvas mechanism.  
+- **Content Module**: Organizes learning activities into structured units targeting vocabulary acquisition, phonetic recognition, and listening comprehension.  
+- **Progression Mechanism**: Supports controlled sequencing of activities, enabling adaptive learning paths based on user interaction patterns.  
+- **Session Tracking**: Records user interactions, allowing analysis and reproducibility of learning behavior.
+
+This architecture enables the system to function both as an educational tool and as a platform for prototyping and evaluating adaptive learning strategies.
+
+# Figures
 
 ![Main interface of KantSpeak showing available modules.](images/interface.png)
 
-# AI usage disclosure
+# AI Usage Disclosure
 
-AI tools were used to generate images for the karaoke page of this software. All generated content was reviewed, tested, and validated by the author. 
+AI-based tools were used to generate visual assets for specific interface components (e.g., karaoke module). All generated content was reviewed and validated by the authors before integration into the system.
 
 # References
-
